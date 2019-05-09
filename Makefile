@@ -91,65 +91,6 @@ destroy-storage:
 		--name $(STORAGE_GROUP) \
 		--no-wait
 
-
-# Deploy the replicated service
-deploy-replicated-service:
-	$(SSH_TO_MASTER) \
-	docker service create \
-		--name replicated \
-		--publish 80:8000 \
-		--replicas=8 \
-		--env SWARM_MODE="REPLICATED" \
-		--env SWARM_PUBLIC_PORT=80 \
-		rcarmo/demo-frontend
-
-# Deploy the global service
-deploy-global-service:
-	$(SSH_TO_MASTER) \
-	docker service create \
-		--name global \
-		--publish 81:8000 \
-		--mode global \
-		--env SWARM_MODE="GLOBAL" \
-		--env SWARM_PUBLIC_PORT=81 \
-		rcarmo/demo-frontend
-
-# Destroy the global service
-destroy-global-service:
-	$(SSH_TO_MASTER) \
-	docker service rm global
-
-# Deploy the test stack
-deploy-stack:
-	cat test-stack/docker-compose.yml | $(SSH_TO_MASTER) "tee > ~/docker-compose.yml"
-	$(SSH_TO_MASTER) "docker stack deploy -c ~/docker-compose.yml test-stack"
-
-destroy-stack:
-	$(SSH_TO_MASTER) docker stack rm test-stack
-
-
-deploy-weavescope:
-	$(SSH_TO_MASTER) "curl -L git.io/scope -o ~/scope && chmod a+x ~/scope && ~/scope launch"
-
-# Scale the demo service
-scale-service-20:
-	$(SSH_TO_MASTER) \
-	docker service scale replicated=20
-
-scale-service-%:
-	$(SSH_TO_MASTER) \
-	docker service scale replicated=$*
-
-# Destroy the global service
-destroy-service:
-	$(SSH_TO_MASTER) \
-	docker service rm replicated
-
-# Update the service (rebalancing doesn't work yet)
-update-service:
-	$(SSH_TO_MASTER) \
-	docker service update replicated
-
 # SSH to master node
 proxy:
 	$(SSH_TO_MASTER) \
@@ -158,10 +99,10 @@ proxy:
 	-L 8080:localhost:8080 \
 	-L 4040:localhost:4040
 
-# Show swarm helper log
+# Show k3s helper log
 tail-helper:
 	$(SSH_TO_MASTER) \
-	sudo journalctl -f -u swarm-helper
+	sudo journalctl -f -u k3s-helper
 
 # View deployment details
 view-deployment:
