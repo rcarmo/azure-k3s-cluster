@@ -7,7 +7,7 @@ write_files:
       #!/bin/bash
       HOSTNAME=`hostname`
       # get the  cluster token
-      TOKEN=$(wget -nv -q -O - --retry-connrefused 20 --waitretry 5 http://master0:1337/join/$HOSTNAME)
+      TOKEN=$(wget -nv -q -O - --retry-connrefused --tries=0 --waitretry 5 http://master0:1337/join/$HOSTNAME)
       # TODO: clean this up
       curl -sfL https://get.k3s.io | K3S_URL=https://master0:6443 K3S_TOKEN=$TOKEN sh -
   - path: /root/leave-cluster.sh
@@ -16,7 +16,7 @@ write_files:
       #!/bin/bash
       HOSTNAME=`hostname`
       # signal the master to drain services from our node
-      wget -nv -q -O - --retry-connrefused 20 --waitretry 5 http://master0:1337/drain/$HOSTNAME
+      wget -nv -q -O - --retry-connrefused --tries=10 --waitretry 5 http://master0:1337/drain/$HOSTNAME
   - path: /etc/systemd/system/k3s-join.service
     permissions: 0444
     content: |
