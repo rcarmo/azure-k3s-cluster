@@ -54,7 +54,7 @@ params = {
         "value": slurp("agent.yml")
     },
     "masterSize": {
-        "value": "Standard_B1ls"
+        "value": "Standard_B1s"
     },
     "agentSize": {
         "value": "Standard_B1ls"

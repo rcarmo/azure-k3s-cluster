@@ -38,13 +38,15 @@ keys:
 	mkdir keys
 	ssh-keygen -b 2048 -t rsa -f keys/$(ADMIN_USERNAME) -q -N ""
 	mv keys/$(ADMIN_USERNAME) keys/$(ADMIN_USERNAME).pem
+	chmod 0600 keys/*
 
 # Generate the Azure Resource Template parameter files
 params:
 	$(eval STORAGE_ACCOUNT_KEY := $(shell az storage account keys list \
 		--resource-group $(STORAGE_GROUP) \
     	--account-name $(STORAGE_ACCOUNT_NAME) \
-		--query "[0].value" | tr -d '"'))
+		--query "[0].value" \
+		--output tsv | tr -d '"'))
 	@mkdir parameters 2> /dev/null; STORAGE_ACCOUNT_KEY=$(STORAGE_ACCOUNT_KEY) python genparams.py > parameters/cluster.json
 
 # Cleanup parameters
