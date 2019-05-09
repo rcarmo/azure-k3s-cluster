@@ -1,7 +1,7 @@
 #cloud-config
 
 write_files:
-  - path: /root/swarm-helper.py
+  - path: /root/k3s-helper.py
     permissions: 0755
     content: |
       #!/usr/bin/env python
@@ -12,46 +12,46 @@ write_files:
 
       def cleanup(signum, frame):
           try:
-              nodes = check_output('docker node ls', shell=True).strip()
-              down = map(lambda x: x.split()[1], filter(lambda x: 'Down' in x, nodes.split("\n")))
+              nodes = check_output('kubectl get nodes', shell=True).strip()
+              down = map(lambda x: x.split()[1], filter(lambda x: 'NotReady' in x, nodes.split("\n")))
               for node in down:
-                  check_output('docker node rm ' + node, shell=True)
+                  check_output('kubectl cordon ' + node, shell=True)
+                  # TODO: remove node completely
+                  #check_output('kubectl delete node ' + node, shell=True)
           except:
               pass
 
-      @get("/join/worker")
+      @get("/join/<hostname>")
       def token():
-          return check_output('docker swarm join-token -q worker', shell=True).strip()
-
-      @get("/join/master")
-      def token():
-          return check_output('docker swarm join-token -q master', shell=True).strip()
+          check_output('kubectl uncordon ' + hostname, shell=True)
+          return check_output('cat /var/lib/rancher/k3s/server/node-token', shell=True).strip()
       
       @get("/drain/<hostname>")
       def drain(hostname):
           try:
-              return check_output('docker node update --availability drain ' + hostname, shell=True).strip()
+              return check_output('kubectl drain ' + hostname + ' --ignore-daemonsets --delete-local-data', shell=True).strip()
+              return check_output('kubectl cordon ' + hostname, shell=True).strip()
           except:
               abort(404, "node not found")
         
       if gethostname() == 'master0':
           try:
-              check_output('docker swarm init', shell=True)
+              check_output('kubectl get nodes', shell=True)
           except:
               pass
           signal(SIGALRM, cleanup)
           setitimer(ITIMER_REAL, 10, 10)
           run(port=1337,host='0.0.0.0')
-  - path: /etc/systemd/system/swarm-helper.service
+  - path: /etc/systemd/system/k3s-helper.service
     permissions: 0444
     content: |
       [Unit]
-      Description=Swarm Helper
+      Description=k3s Helper
       DefaultDependencies=no
       After=multi-user.target
       [Service]
       Type=oneshot
-      ExecStart=/root/swarm-helper.py
+      ExecStart=/root/k3s-helper.py
       [Install]
       WantedBy=multi-user.target
   - path: /etc/waagent.conf
@@ -67,21 +67,13 @@ mounts:
   - - //${STORAGE_ACCOUNT_NAME}.file.core.windows.net/${SHARE_NAME}
     - /srv
     - cifs
-    - vers=3.0,username=${STORAGE_ACCOUNT_NAME},password=${STORAGE_ACCOUNT_KEY},dir_mode=0700,file_mode=0600,uid=1000,gid=1000,noperm,,iocharset=utf8
-
-apt:
-  sources:
-    docker_ce.list:
-      source: "deb https://download.docker.com/linux/ubuntu bionic stable"
-      keyserver: p80.pool.sks-keyservers.net
-      keyid: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
+    - vers=3.0,username=${STORAGE_ACCOUNT_NAME},password=${STORAGE_ACCOUNT_KEY},dir_mode=0770,file_mode=0660,uid=1000,gid=1000,noperm,,iocharset=utf8
 
 #apt_update: true
 #apt_upgrade: true
 
 packages:
   - ntp
-  - docker-ce
   - tmux
   - htop
   - vim
@@ -90,9 +82,7 @@ packages:
   - python-bottle
 
 runcmd:
-  - usermod -G docker cluster
-  - systemctl enable docker
-  - systemctl start docker
-  - systemctl enable swarm-helper
-  - systemctl start swarm-helper
+  - curl -sfL https://get.k3s.io | sh -
+  - systemctl enable k3s-helper
+  - systemctl start k3s-helper
   #- reboot

@@ -18,13 +18,14 @@ This was originally built as [a Docker Swarm template][adsc], and even though Az
 
 ## Roadmap
 
+* [ ] air-gapped (i.e., standalone) install without `curl`
 * [ ] remove scale set load balancer
 * [ ] trivial ingress through master node
 * [ ] clean `kubernetes-dashboard` deployment
 * [ ] sample deployments/pods/charts
-* [ ] install `k3s` via`cloud-config`
-* [ ] change `cloud-config` to expose `k3s` token to agents
-* [ ] remove unused packages from `cloud-config`
+* [ ] WIP: install `k3s` via`cloud-config`
+* [x] change `cloud-config` to expose `k3s` token to agents
+* [x] remove unused packages from `cloud-config`
 * [x] remove unnecessary commands from `Makefile`
 * [x] remove unnecessary files from repo and trim history
 * [x] fork, new `README`

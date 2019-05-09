@@ -1,45 +1,44 @@
 #cloud-config
 
 write_files:
-  - path: /root/join-swarm.sh
+  - path: /root/join-cluster.sh
     permissions: 0755
     content: |
       #!/bin/bash
-      # make sure there's no disk state that points to an existing swarm
-      docker swarm leave
-      # get the swarm worker token
-      TOKEN=$(wget -nv -q -O - --retry-connrefused 20 --waitretry 5 http://master0:1337/join/worker)
-      docker swarm join --token $TOKEN master0:2377
-  - path: /root/leave-swarm.sh
+      HOSTNAME=`hostname`
+      # get the  cluster token
+      TOKEN=$(wget -nv -q -O - --retry-connrefused 20 --waitretry 5 http://master0:1337/join/$HOSTNAME)
+      # TODO: clean this up
+      curl -sfL https://get.k3s.io | K3S_URL=https://master0:6443 K3S_TOKEN=$TOKEN sh -
+  - path: /root/leave-cluster.sh
     permissions: 0755
     content: |
       #!/bin/bash
       HOSTNAME=`hostname`
       # signal the master to drain services from our node
       wget -nv -q -O - --retry-connrefused 20 --waitretry 5 http://master0:1337/drain/$HOSTNAME
-      docker swarm leave
-  - path: /etc/systemd/system/swarm-join.service
+  - path: /etc/systemd/system/k3s-join.service
     permissions: 0444
     content: |
       [Unit]
-      Description=Join Swarm
+      Description=Join k3s cluster
       DefaultDependencies=no
       After=multi-user.target
       [Service]
       Type=oneshot
-      ExecStart=/root/join-swarm.sh
+      ExecStart=/root/join-cluster.sh
       [Install]
       WantedBy=multi-user.target
-  - path: /etc/systemd/system/swarm-leave.service
+  - path: /etc/systemd/system/k3s-leave.service
     permissions: 0444
     content: |
       [Unit]
-      Description=Leave Swarm
+      Description=Leave k3s cluster
       DefaultDependencies=no
       Before=shutdown.target reboot.target halt.target
       [Service]
       Type=oneshot
-      ExecStart=/root/leave-swarm.sh
+      ExecStart=/root/leave-cluster.sh
       [Install]
       WantedBy=halt.target reboot.target shutdown.target
   - path: /etc/waagent.conf
@@ -55,21 +54,13 @@ mounts:
   - - //${STORAGE_ACCOUNT_NAME}.file.core.windows.net/${SHARE_NAME}
     - /srv
     - cifs
-    - vers=3.0,username=${STORAGE_ACCOUNT_NAME},password=${STORAGE_ACCOUNT_KEY},dir_mode=0700,file_mode=0600,uid=1000,gid=1000,noperm,,iocharset=utf8
-apt:
-  sources:
-    docker_ce.list:
-      source: "deb https://download.docker.com/linux/ubuntu bionic stable"
-      keyserver: p80.pool.sks-keyservers.net
-      keyid: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
+    - vers=3.0,username=${STORAGE_ACCOUNT_NAME},password=${STORAGE_ACCOUNT_KEY},dir_mode=0770,file_mode=0660,uid=1000,gid=1000,noperm,,iocharset=utf8
 
-# Skip upgrading the agents for quicker spin-up
 #apt_update: true
 #apt_upgrade: true
 
 packages:
   - ntp
-  - docker-ce
   #- tmux
   #- htop
   #- vim
@@ -77,11 +68,8 @@ packages:
   #- curl
 
 runcmd:
-  - usermod -G docker cluster
-  - systemctl enable docker
-  - systemctl enable swarm-join
-  - systemctl enable swarm-leave
-  - systemctl start docker
-  - systemctl start swarm-leave
-  - systemctl start swarm-join
+  - systemctl enable k3s-join
+  - systemctl enable k3s-leave
+  - systemctl start k3s-leave
+  - systemctl start k3s-join
   #- reboot
