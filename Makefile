@@ -1,6 +1,6 @@
 # Set environment variables
-export COMPUTE_GROUP?=swarm-cluster
-export STORAGE_GROUP?=swarm-storage
+export COMPUTE_GROUP?=k3s-cluster
+export STORAGE_GROUP?=k3s-storage
 export LOCATION?=eastus
 export MASTER_COUNT?=1
 export AGENT_COUNT?=3
@@ -91,18 +91,6 @@ destroy-storage:
 		--name $(STORAGE_GROUP) \
 		--no-wait
 
-# Deploy the Swarm monitor
-deploy-monitor:
-	$(SSH_TO_MASTER) \
-	docker run -it -d -p 8080:8080 \
-		-e HOST=$(MASTER_FQDN) \
-		-v /var/run/docker.sock:/var/run/docker.sock \
-		dockersamples/visualizer
-
-# Kill the swarm monitor
-kill-monitor:
-	$(SSH_TO_MASTER) \
-	"docker ps | grep dockersamples/visualizer | cut -d\  -f 1 | xargs docker kill"
 
 # Deploy the replicated service
 deploy-replicated-service:

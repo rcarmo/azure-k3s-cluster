@@ -12,13 +12,20 @@ The key aspect of this template is that _you can add and remove agents at will_ 
 
 ## Why
 
-This was originally built as [a Docker Swarm temmplate][adsc], and even though Azure has a perfectly serviceable Kubernetes managed service, I enjoy the challenge of building my own stuff and fine-tuning it.
+This was originally built as [a Docker Swarm template][adsc], and even though Azure has a perfectly serviceable Kubernetes managed service, I enjoy the challenge of building my own stuff and fine-tuning it.
 
 [`k3s`][k3s] is a breath of fresh air, and an opportunity to play around with a simpler, slimmer version of Kubernetes--and break it to see what happens.
 
 ## Roadmap
 
-* [ ] remove unnecessary commands from `Makefile`
+* [ ] remove scale set load balancer
+* [ ] trivial ingress through master node
+* [ ] clean `kubernetes-dashboard` deployment
+* [ ] sample deployments/pods/charts
+* [ ] install `k3s` via`cloud-config`
+* [ ] change `cloud-config` to expose `k3s` token to agents
+* [ ] remove unused packages from `cloud-config`
+* [x] remove unnecessary commands from `Makefile`
 * [x] remove unnecessary files from repo and trim history
 * [x] fork, new `README`
 
@@ -29,11 +36,6 @@ This was originally built as [a Docker Swarm temmplate][adsc], and even though A
 * `make params` - generates ARM template parameters
 * `make deploy-compute` - deploys cluster resources and pre-provisions Docker on all machines
 * `make view-deployment` - view deployment progress
-* `make deploy-monitor` - deploys a Swarm monitor container on `http://master0:8080`
-* `make deploy-replicated-service` - deploys a simple web service onto the Swarm cluster (8 replicas)
-* `make deploy-global-service` - deploys a simple web service onto the Swarm cluster (one container per node)
-* `make scale-service-<number>` - scales the replicated service to `<number>` instances, i.e., `make scale-service-10` will resize it (up or down) to 10 containers
-* `make deploy-stack` - deploys a simple Redis-backed stateful stack onto the Swarm cluster 
 * `make list-agents` - lists all agent VMs
 * `make scale-agents-<number>` - scales the agent VM scale set to `<number>` instances, i.e., `make scale-10` will resize it (up or down) to 10 VMs
 * `make stop-agents` - stops all agents
@@ -42,7 +44,7 @@ This was originally built as [a Docker Swarm temmplate][adsc], and even though A
 * `make reimage-agents-serial` - reimages all agents in sequence
 * `make chaos-monkey` - restarts all agents in random order
 * `make proxy` - opens an SSH session to `master0` and sets up TCP forwarding to `localhost`
-* `make tail-helper` - opens an SSH session to `master0` and tails the `swarm-helper` log
+* `make tail-helper` - opens an SSH session to `master0` and tails the `k3s-helper` log
 * `make list-endpoints` - list DNS aliases
 * `make destroy-cluster` - destroys the entire cluster
 
