@@ -8,7 +8,7 @@ This is an Azure Resource Manager template that automatically deploys a [`k3s`][
 
 The template defaults to deploying B-Series VMs (`B1ls`) with the smallest possible managed disk size (S4, 32GB). It also deploys (and mounts) an Azure File Share on all machines with (very) permissive access.
 
-The key aspect of this template is that _you can add and remove agents at will_ simply by resizing the VM scaleset - the cluster comes with a few (very simple) helper scripts that allow nodes to join and leave the swarm as they are created/destroyed. 
+The key aspect of this template is that _you can add and remove agents at will_ simply by resizing the VM scaleset - the cluster comes with a few (very simple) helper scripts that allow nodes to join and leave the cluster as they are created/destroyed. 
 
 ## Why
 
