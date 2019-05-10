@@ -95,6 +95,7 @@ destroy-storage:
 
 # SSH to master node
 proxy:
+	-cat keys/cluster.pem | ssh-add -k -
 	$(SSH_TO_MASTER) \
 	-L 9080:localhost:80 \
 	-L 9081:localhost:81 \

@@ -22,7 +22,7 @@ write_files:
               pass
 
       @get("/join/<hostname>")
-      def token():
+      def token(hostname):
           check_output('kubectl uncordon ' + hostname, shell=True)
           return check_output('cat /var/lib/rancher/k3s/server/node-token', shell=True).strip()
       
