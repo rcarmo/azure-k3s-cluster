@@ -6,9 +6,9 @@ A (WIP) dynamically resizable [`k3s`][k3s] cluster for Azure, based on my [`azur
 
 This is an Azure Resource Manager template that automatically deploys a [`k3s`][k3s] cluster atop Ubuntu 18.04. This cluster has a single master VMs and a VM scaleset for workers/agents, plus the required network infrastructure.
 
-The template defaults to deploying B-Series VMs (`B1ls`) with the smallest possible managed disk size (S4, 32GB). It also deploys (and mounts) an Azure File Share on all machines with (very) permissive access.
+The template defaults to deploying B-Series VMs (`B1ls`) with the smallest possible managed disk size (S4, 32GB). It also deploys (and mounts) an Azure File Share on all machines with (very) permissive access at `/srv`, which makes it quite easy to run stateful services.
 
-The key aspect of this template is that _you can add and remove agents at will_ simply by resizing the VM scaleset - the cluster comes with a few (very simple) helper scripts that allow nodes to join and leave the cluster as they are created/destroyed. 
+The key aspect of this template is that _you can add and remove agents at will_ simply by resizing the VM scaleset - the cluster comes with a few (very simple) helper scripts that allow nodes to join and leave the cluster as they are created/destroyed, and the `k3s` scheduler will redeploy pods as needed.
 
 ## Why
 
@@ -21,8 +21,8 @@ This was originally built as [a Docker Swarm template][adsc], and even though Az
 * [ ] air-gapped (i.e., standalone) install without `curl`
 * [ ] remove scale set load balancer
 * [ ] clean `kubernetes-dashboard` deployment
-* [ ] WIP: trivial ingress through master node
 * [ ] WIP: sample deployments/pods/charts
+* [x] trivial ingress through master node (built-in)
 * [x] Set node role labels
 * [x] WIP: install `k3s` via`cloud-config`
 * [x] change `cloud-config` to expose `k3s` token to agents
