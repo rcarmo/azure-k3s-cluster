@@ -13,16 +13,16 @@ write_files:
       def cleanup(signum, frame):
           try:
               nodes = check_output('kubectl get nodes', shell=True).strip()
-              down = map(lambda x: x.split()[0], filter(lambda x: 'NotReady' in x, nodes.split("\n")))
-              for node in down:
-                  check_output('kubectl cordon ' + node, shell=True)
-                  check_output('kubectl delete node ' + node, shell=True)
               unlabeled = map(lambda x: x.split()[0], filter(lambda x: '<none>' in x, nodes.split("\n")))
               for node in unlabeled:
                   if "master" not in node:
                       check_output('kubectl label node ' + node + ' --overwrite node-role.kubernetes.io/worker=""')
                   else:
                       check_output('kubectl label node ' + node + ' --overwrite node-role.kubernetes.io/master=""')
+              down = map(lambda x: x.split()[0], filter(lambda x: 'NotReady' in x, nodes.split("\n")))
+              for node in down:
+                  check_output('kubectl cordon ' + node, shell=True)
+                  check_output('kubectl delete node ' + node, shell=True)
           except:
               pass
 
