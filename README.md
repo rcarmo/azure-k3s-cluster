@@ -20,12 +20,14 @@ This was originally built as [a Docker Swarm template][adsc], and even though Az
 
 * [ ] air-gapped (i.e., standalone) install without `curl`
 * [ ] remove scale set load balancer
+* [ ] re-enable first-time reboot after OS package updates
+* [ ] document `cloud-config`
 * [ ] clean `kubernetes-dashboard` deployment
 * [ ] WIP: sample deployments/pods/charts
-* [ ] WIP: private registry on master node
+* [x] private registry on master node
 * [x] trivial ingress through master node (built-in)
 * [x] Set node role labels
-* [x] WIP: install `k3s` via`cloud-config`
+* [x] install `k3s` via`cloud-config`
 * [x] change `cloud-config` to expose `k3s` token to agents
 * [x] remove unused packages from `cloud-config`
 * [x] remove unnecessary commands from `Makefile`
