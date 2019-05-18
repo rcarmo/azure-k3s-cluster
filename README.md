@@ -22,6 +22,7 @@ This was originally built as [a Docker Swarm template][adsc], and even though Az
 * [ ] remove scale set load balancer
 * [ ] clean `kubernetes-dashboard` deployment
 * [ ] WIP: sample deployments/pods/charts
+* [ ] WIP: private registry on master node
 * [x] trivial ingress through master node (built-in)
 * [x] Set node role labels
 * [x] WIP: install `k3s` via`cloud-config`
