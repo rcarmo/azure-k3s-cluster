@@ -24,7 +24,7 @@ write_files:
       def token(hostname):
           try:
               check_output('kubectl uncordon ' + hostname, shell=True)
-              check_output('kubectl label node ' + hostname + ' --overwrite node-role.kubernetes.io/worker=true')
+              check_output('kubectl label node ' + hostname + ' --overwrite node-role.kubernetes.io/worker=""')
           except:
               pass
           return check_output('cat /var/lib/rancher/k3s/server/node-token', shell=True).strip()
@@ -39,7 +39,7 @@ write_files:
         
       if gethostname() == 'master0':
           try:
-              check_output('kubectl label node master0 --overwrite node-role.kubernetes.io/master=true')
+              check_output('kubectl label node master0 --overwrite node-role.kubernetes.io/master=""')
           except:
               pass
           signal(SIGALRM, cleanup)
