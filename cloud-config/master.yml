@@ -24,7 +24,7 @@ write_files:
       def token(hostname):
           try:
               check_output('kubectl uncordon ' + hostname, shell=True)
-              check_output('kubectl label node ' + hostname + ' --overwrite node-role.kubernetes.io/worker=""')
+              check_output('kubectl label node ' + hostname + ' --overwrite node-role.kubernetes.io/worker=true')
           except:
               pass
           return check_output('cat /var/lib/rancher/k3s/server/node-token', shell=True).strip()
@@ -39,7 +39,7 @@ write_files:
         
       if gethostname() == 'master0':
           try:
-              check_output('kubectl label node master0 --overwrite node-role.kubernetes.io/master=""')
+              check_output('kubectl label node master0 --overwrite node-role.kubernetes.io/master=true')
           except:
               pass
           signal(SIGALRM, cleanup)
@@ -65,6 +65,24 @@ write_files:
       ResourceDisk.MountPoint=/mnt/resource
       ResourceDisk.EnableSwap=y
       ResourceDisk.SwapSizeMB=2048
+  - path: /var/lib/rancher/k3s/agent/etc/containerd/config.toml.tmpl
+    permissions: 0444
+    content: |
+      [plugins.opt]
+      path = "{{ .NodeConfig.Containerd.Opt }}"
+
+      [plugins.cri]
+      stream_server_address = "{{ .NodeConfig.AgentConfig.NodeName }}"
+      stream_server_port = "10010"
+        [plugins.cri.cni]
+          bin_dir = "{{ .NodeConfig.AgentConfig.CNIBinDir }}"
+          conf_dir = "{{ .NodeConfig.AgentConfig.CNIConfDir }}"
+
+      [plugins.cri.registry.mirrors]
+        [plugins.cri.registry.mirrors."docker.io"]
+          endpoint = ["https://registry-1.docker.io"]
+        [plugins.cri.registry.mirrors."master0:5000"]
+          endpoint = ["http://master0:5000"]
 
 mounts:
   - - //${STORAGE_ACCOUNT_NAME}.file.core.windows.net/${SHARE_NAME}
