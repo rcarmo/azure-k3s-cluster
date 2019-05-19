@@ -76,6 +76,12 @@ deploy-compute:
 		--output table \
 		--no-wait
 
+redeploy:
+	-make destroy-compute
+	make params
+	while [[ $$(az group list | grep Deleting) =~ "Deleting" ]]; do sleep 30; done
+	make deploy-compute
+
 # create a set of SMB shares on the storage account
 create-shares:
 	$(eval STORAGE_ACCOUNT := $(shell az storage account list --resource-group ci-swarm-cluster --output tsv --query "[].name"))
@@ -104,6 +110,7 @@ proxy:
 
 # Show k3s helper log
 tail-helper:
+	-cat keys/cluster.pem | ssh-add -k -
 	$(SSH_TO_MASTER) \
 	sudo journalctl -f -u k3s-helper
 

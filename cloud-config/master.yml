@@ -9,21 +9,26 @@ write_files:
       from subprocess import check_output
       from socket import gethostname
       from signal import signal, setitimer, ITIMER_REAL, SIGALRM
+      from sys import stderr
 
       def cleanup(signum, frame):
+          if signum in [9, 15]:
+            stderr.write("Exiting on signal %d\n" % signum)
+            exit(0)
           try:
               nodes = check_output('kubectl get nodes', shell=True).strip()
               unlabeled = map(lambda x: x.split()[0], filter(lambda x: '<none>' in x, nodes.split("\n")))
               for node in unlabeled:
                   if "master" not in node:
-                      check_output('kubectl label node ' + node + ' --overwrite node-role.kubernetes.io/worker=""')
+                      check_output('kubectl label node ' + node + ' --overwrite node-role.kubernetes.io/worker=""', shell=True)
                   else:
-                      check_output('kubectl label node ' + node + ' --overwrite node-role.kubernetes.io/master=""')
+                      check_output('kubectl label node ' + node + ' --overwrite node-role.kubernetes.io/master=""', shell=True)
               down = map(lambda x: x.split()[0], filter(lambda x: 'NotReady' in x, nodes.split("\n")))
               for node in down:
                   check_output('kubectl cordon ' + node, shell=True)
                   check_output('kubectl delete node ' + node, shell=True)
-          except:
+          except Exception as e:
+              stderr.write("%s\n" % e)
               pass
 
       @get("/join/<hostname>")
@@ -37,14 +42,14 @@ write_files:
       @get("/drain/<hostname>")
       def drain(hostname):
           try:
-              return check_output('kubectl drain ' + hostname + ' --ignore-daemonsets --delete-local-data', shell=True).strip()
+              check_output('kubectl drain ' + hostname + ' --ignore-daemonsets --delete-local-data', shell=True).strip()
               return check_output('kubectl cordon ' + hostname, shell=True).strip()
           except:
               abort(404, "node not found")
         
       if gethostname() == 'master0':
           signal(SIGALRM, cleanup)
-          setitimer(ITIMER_REAL, 120, 10)
+          setitimer(ITIMER_REAL, 60, 10)
           run(port=1337,host='0.0.0.0')
   - path: /etc/systemd/system/k3s-helper.service
     permissions: 0444
@@ -91,8 +96,8 @@ mounts:
     - cifs
     - vers=3.0,username=${STORAGE_ACCOUNT_NAME},password=${STORAGE_ACCOUNT_KEY},dir_mode=0770,file_mode=0660,uid=1000,gid=1000,noperm,,iocharset=utf8
 
-#apt_update: true
-#apt_upgrade: true
+apt_update: true
+apt_upgrade: true
 
 packages:
   - ntp
@@ -106,5 +111,5 @@ packages:
 runcmd:
   - curl -sfL https://get.k3s.io | sh -
   - systemctl enable k3s-helper
-  - systemctl start k3s-helper
-  #- reboot
+  #- systemctl start k3s-helper
+  - reboot

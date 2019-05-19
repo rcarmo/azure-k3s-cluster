@@ -74,8 +74,8 @@ mounts:
     - cifs
     - vers=3.0,username=${STORAGE_ACCOUNT_NAME},password=${STORAGE_ACCOUNT_KEY},dir_mode=0770,file_mode=0660,uid=1000,gid=1000,noperm,,iocharset=utf8
 
-#apt_update: true
-#apt_upgrade: true
+apt_update: true
+apt_upgrade: true
 
 packages:
   - ntp
@@ -88,6 +88,6 @@ packages:
 runcmd:
   - systemctl enable k3s-join
   - systemctl enable k3s-leave
-  - systemctl start k3s-leave
-  - systemctl start k3s-join
-  #- reboot
+  #- systemctl start k3s-leave
+  #- systemctl start k3s-join
+  - reboot
