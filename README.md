@@ -19,11 +19,11 @@ This was originally built as [a Docker Swarm template][adsc], and even though Az
 ## Roadmap
 
 * [ ] air-gapped (i.e., standalone) install without `curl`
-* [ ] remove scale set load balancer
-* [ ] re-enable first-time reboot after OS package updates
 * [ ] document `cloud-config`
 * [ ] clean `kubernetes-dashboard` deployment
 * [ ] WIP: sample deployments/pods/charts
+* [x] remove scale set load balancer (everything must go through `traefik` on the master)
+* [x] re-enable first-time reboot after OS package updates
 * [x] private registry on master node
 * [x] trivial ingress through master node (built-in)
 * [x] Set node role labels

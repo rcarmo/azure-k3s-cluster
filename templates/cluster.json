@@ -290,7 +290,6 @@
       "location": "[resourceGroup().location]",
       "apiVersion": "2019-03-01",
       "dependsOn": [
-        "[concat('Microsoft.Network/loadBalancers/', parameters('agentPrefix'))]",
         "[concat('Microsoft.Storage/storageAccounts/', variables('diagsName'))]"
       ],
       "sku": {
@@ -354,17 +353,7 @@
                       "properties": {
                         "subnet": {
                           "id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/virtualNetworks/', 'cluster', '/subnets/', 'agents')]"
-                        },
-                        "loadBalancerBackendAddressPools": [
-                          {
-                            "id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/loadBalancers/', parameters('agentPrefix'), '/backendAddressPools/', 'agentPool')]"
-                          }
-                        ],
-                        "loadBalancerInboundNatPools": [
-                          {
-                            "id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/loadBalancers/', parameters('agentPrefix'), '/inboundNatPools/', 'sshPool')]"
-                          }
-                        ]
+                        }
                       }
                     }
                   ]
@@ -516,97 +505,6 @@
         "dnsSettings": {
           "domainNameLabel": "[concat(resourceGroup().name, '-', parameters('agentPrefix'),'-lb')]"
         }
-      }
-    },
-    {
-      "type": "Microsoft.Network/loadBalancers",
-      "name": "[parameters('agentPrefix')]",
-      "location": "[resourceGroup().location]",
-      "apiVersion": "2015-06-15",
-      "dependsOn": [
-        "[concat('Microsoft.Network/publicIPAddresses/',parameters('agentPrefix'))]"
-      ],
-      "properties": {
-        "frontendIPConfigurations": [
-          {
-            "name": "LoadBalancerFrontEnd",
-            "properties": {
-              "publicIPAddress": {
-                "id": "[resourceId('Microsoft.Network/publicIPAddresses',parameters('agentPrefix'))]"
-              }
-            }
-          }
-        ],
-        "backendAddressPools": [
-          {
-            "name": "agentPool"
-          }
-        ],
-        "inboundNatPools": [
-          {
-            "name": "sshPool",
-            "properties": {
-              "frontendIPConfiguration": {
-                "id": "[concat(resourceId('Microsoft.Network/loadBalancers',parameters('agentPrefix')),'/frontendIPConfigurations/loadBalancerFrontEnd')]"
-              },
-              "protocol": "tcp",
-              "frontendPortRangeStart": "[variables('natStartPort')]",
-              "frontendPortRangeEnd": "[variables('natEndPort')]",
-              "backendPort": "[variables('natBackendPort')]"
-            }
-          }
-        ],
-        "loadBalancingRules": [
-          {
-            "name": "httpRule",
-            "properties": {
-              "frontendIPConfiguration": {
-                "id": "[concat(resourceId('Microsoft.Network/loadBalancers',parameters('agentPrefix')),'/frontendIPConfigurations/loadBalancerFrontEnd')]"
-              },
-              "backendAddressPool": {
-                "id": "[concat(resourceId('Microsoft.Network/loadBalancers',parameters('agentPrefix')),'/backendAddressPools/agentPool')]"
-              },
-              "protocol": "Tcp",
-              "frontendPort": 80,
-              "backendPort": 80,
-              "enableFloatingIP": false,
-              "idleTimeoutInMinutes": 5,
-              "probe": {
-                "id": "[concat(resourceId('Microsoft.Network/loadBalancers',parameters('agentPrefix')),'/probes/tcpProbe')]"
-              }
-            }
-          },
-          {
-            "name": "alternateHttpRule",
-            "properties": {
-              "frontendIPConfiguration": {
-                "id": "[concat(resourceId('Microsoft.Network/loadBalancers',parameters('agentPrefix')),'/frontendIPConfigurations/loadBalancerFrontEnd')]"
-              },
-              "backendAddressPool": {
-                "id": "[concat(resourceId('Microsoft.Network/loadBalancers',parameters('agentPrefix')),'/backendAddressPools/agentPool')]"
-              },
-              "protocol": "Tcp",
-              "frontendPort": 81,
-              "backendPort": 81,
-              "enableFloatingIP": false,
-              "idleTimeoutInMinutes": 5,
-              "probe": {
-                "id": "[concat(resourceId('Microsoft.Network/loadBalancers',parameters('agentPrefix')),'/probes/tcpProbe')]"
-              }
-            }
-          }
-        ],
-        "probes": [
-          {
-            "name": "tcpProbe",
-            "properties": {
-              "protocol": "Tcp",
-              "port": 22,
-              "intervalInSeconds": 10,
-              "numberOfProbes": 10
-            }
-          }
-        ]
       }
     },
     {
