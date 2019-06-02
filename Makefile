@@ -12,6 +12,8 @@ export TIMESTAMP=`date "+%Y-%m-%d-%H-%M-%S"`
 export FILE_SHARES=config data registry
 export STORAGE_ACCOUNT_NAME?=shared0$(shell echo $(MASTER_FQDN)|shasum|base64|tr '[:upper:]' '[:lower:]'|cut -c -16)
 export SHARE_NAME?=data
+export SHELL=/bin/bash
+
 
 # Permanent local overrides
 -include .env
