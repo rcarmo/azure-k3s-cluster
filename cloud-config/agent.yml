@@ -86,6 +86,7 @@ packages:
   #- curl
 
 runcmd:
+  - timedatectl set-timezone Europe/Lisbon
   - systemctl enable k3s-join
   - systemctl enable k3s-leave
   #- systemctl start k3s-leave

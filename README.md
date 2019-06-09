@@ -22,6 +22,7 @@ This was originally built as [a Docker Swarm template][adsc], and even though Az
 * [ ] document `cloud-config`
 * [ ] clean `kubernetes-dashboard` deployment
 * [ ] WIP: sample deployments/pods/charts
+* [x] set timezone
 * [x] `bash` completion for `kubectl` in master node
 * [x] remove scale set load balancer (everything must go through `traefik` on the master)
 * [x] re-enable first-time reboot after OS package updates

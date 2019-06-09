@@ -109,6 +109,7 @@ packages:
   - python-bottle
 
 runcmd:
+  - timedatectl set-timezone Europe/Lisbon
   - curl -sfL https://get.k3s.io | sh -
   - kubectl completion bash | sudo tee /etc/bash_completion.d/kubectl
   - systemctl enable k3s-helper
