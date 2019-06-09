@@ -390,13 +390,13 @@
                   "timeWindow": "PT5M",
                   "timeAggregation": "Average",
                   "operator": "GreaterThan",
-                  "threshold": 50
+                  "threshold": 80
                 },
                 "scaleAction": {
                   "direction": "Increase",
                   "type": "ChangeCount",
                   "value": "1",
-                  "cooldown": "PT1M"
+                  "cooldown": "PT5M"
                 }
               },
               {
