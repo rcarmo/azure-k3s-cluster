@@ -21,7 +21,9 @@ This was originally built as [a Docker Swarm template][adsc], and even though Az
 * [ ] air-gapped (i.e., standalone) install without `curl`
 * [ ] document `cloud-config`
 * [ ] clean `kubernetes-dashboard` deployment
+* [ ] Merge [this sample downscale helper](https://github.com/Azure-Samples/azure-scale-set-smart-downscale)
 * [ ] WIP: sample deployments/pods/charts
+* [x] Scratch folder on agents' temporary storage
 * [x] set timezone
 * [x] `bash` completion for `kubectl` in master node
 * [x] remove scale set load balancer (everything must go through `traefik` on the master)

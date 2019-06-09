@@ -68,7 +68,6 @@ write_files:
     content: |
       ResourceDisk.Format=y
       ResourceDisk.Filesystem=ext4
-      ResourceDisk.MountPoint=/mnt/resource
       ResourceDisk.EnableSwap=y
       ResourceDisk.SwapSizeMB=2048
   - path: /var/lib/rancher/k3s/agent/etc/containerd/config.toml.tmpl

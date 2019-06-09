@@ -154,6 +154,36 @@ start-agents:
 		--name $(VMSS_NAME) \
 		--no-wait
 
+# Show info
+show-agents:
+	az vmss show \
+		--resource-group $(COMPUTE_GROUP) \
+		--name $(VMSS_NAME) \
+		--output json
+
+# Individual agent size
+resize-agents-up:
+	az vmss update \
+	   --resource-group $(COMPUTE_GROUP) \
+	   --name $(VMSS_NAME) \
+	   --set sku.name=Standard_F4 \
+	&& az vmss update-instances \
+	   --resource-group $(COMPUTE_GROUP) \
+	   --name $(VMSS_NAME) \
+	   --instance-ids=* \
+	   --no-wait
+
+resize-agents-down:
+	az vmss update \
+	   --resource-group $(COMPUTE_GROUP) \
+	   --name $(VMSS_NAME) \
+	   --set sku.name=Standard_B2s \
+	&& az vmss update-instances \
+	   --resource-group $(COMPUTE_GROUP) \
+	   --name $(VMSS_NAME) \
+	   --instance-ids=* \
+	   --no-wait
+
 # Reimage VMSS instances
 reimage-agents-parallel:
 	az vmss reimage --resource-group $(COMPUTE_GROUP) --name $(VMSS_NAME) --no-wait
