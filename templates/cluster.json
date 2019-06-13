@@ -181,8 +181,9 @@
       "defaultValue": {
         "signedServices": "bt",
         "signedPermission": "rwlacu",
+        "signedStart": "[utcNow('yyyy-MM-ddTHH:mm:ssZ')]",
         "signedExpiry": "[replace(utcNow('yyyy-MM-ddTHH:mm:ssZ'), utcNow('yyyy'), string(add(10,int(utcNow('yyyy')))))]",
-        "signedResourceTypes": "o"
+        "signedResourceTypes": "co"
       },
       "metadata": {
         "description": "SAS token with 10-year lifetime for Linux diagnostics"

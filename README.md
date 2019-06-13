@@ -24,7 +24,7 @@ This was originally built as [a Docker Swarm template][adsc], and even though Az
 * [ ] Merge [this sample downscale helper](https://github.com/Azure-Samples/azure-scale-set-smart-downscale)
 * [ ] WIP: sample deployments/pods/charts
 * [x] Managed Service Identity for master
-* [x] add Linux Monitoring Extension (3.x) to master and agents
+* [x] add Linux Monitoring Extension (3.x) to master and agents (visible in the "Guest (classic)" metrics namespace in Azure Portal)
 * [x] scratch folder on agents' temporary storage volume (on-hypervisor SSD), available as `/mnt/scratch`
 * [x] set timezone
 * [x] `bash` completion for `kubectl` in master node
