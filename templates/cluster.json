@@ -244,7 +244,7 @@
       "location": "[resourceGroup().location]"
     },
     {
-      "comment": "Role assignment as Virtual Machine Contributor to each master instance",
+      "comments": "Role assignment as Virtual Machine Contributor to each master instance",
       "apiVersion": "2017-09-01",
       "type": "Microsoft.Authorization/roleAssignments",
       "copy": {
