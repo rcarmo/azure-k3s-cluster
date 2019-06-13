@@ -16,14 +16,17 @@ This was originally built as [a Docker Swarm template][adsc], and even though Az
 
 [`k3s`][k3s] is a breath of fresh air, and an opportunity to play around with a simpler, slimmer version of Kubernetes--and break it to see what happens.
 
+Also, a lot of the ARM templating involved (for metrics, managed identities, etc.) lacks comprehensive samples, so this was also a way for me to provide a fully working one.
+
 ## Roadmap
 
 * [ ] air-gapped (i.e., standalone) install without `curl`
+* [ ] upgrade to `k3s` 0.6.0 and test its metrics server
 * [ ] document `cloud-config`
 * [ ] clean `kubernetes-dashboard` deployment
-* [ ] Merge [this sample downscale helper](https://github.com/Azure-Samples/azure-scale-set-smart-downscale)
 * [ ] WIP: sample deployments/pods/charts
-* [x] Managed Service Identity for master
+* [ ] WIP: simple Python scale-down helper inspired by [this C# sample](https://github.com/Azure-Samples/azure-scale-set-smart-downscale)
+* [x] Managed Service Identity for master and role allocations to allow it to manage the scaleset (and the rest of the resource group)
 * [x] add Linux Monitoring Extension (3.x) to master and agents (visible in the "Guest (classic)" metrics namespace in Azure Portal)
 * [x] scratch folder on agents' temporary storage volume (on-hypervisor SSD), available as `/mnt/scratch`
 * [x] set timezone
