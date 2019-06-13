@@ -235,12 +235,25 @@
       }
     },
     {
+      "comments": "Master Node(s) managed Identities",
+      "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+      "name": "[parameters('masterPrefix')]",
+      "apiVersion": "2018-11-30",
+      "location": "[resourceGroup().location]"
+    },
+    {
       "comments": "Master Node(s)",
       "type": "Microsoft.Compute/virtualMachines",
       "copy": {
         "name": "masters",
         "count": "[parameters('masterCount')]"
       },
+      "identity": {
+        "type": "userAssigned",
+        "userAssignedIdentities": {
+            "[resourceID('Microsoft.ManagedIdentity/userAssignedIdentities/',parameters('masterPrefix'))]": {}
+        }
+     },
       "name": "[concat(parameters('masterPrefix'),copyIndex())]",
       "apiVersion": "2019-03-01",
       "location": "[resourceGroup().location]",
@@ -300,6 +313,7 @@
         }
       },
       "dependsOn": [
+        "[concat('Microsoft.ManagedIdentity/userAssignedIdentities/', parameters('masterPrefix'))]",
         "[concat('Microsoft.Network/networkInterfaces/', parameters('masterPrefix'), copyIndex())]",
         "[concat('Microsoft.Compute/availabilitySets/', 'masters')]",
         "[concat('Microsoft.Storage/storageAccounts/', variables('diagsName'))]"

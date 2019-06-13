@@ -23,8 +23,9 @@ This was originally built as [a Docker Swarm template][adsc], and even though Az
 * [ ] clean `kubernetes-dashboard` deployment
 * [ ] Merge [this sample downscale helper](https://github.com/Azure-Samples/azure-scale-set-smart-downscale)
 * [ ] WIP: sample deployments/pods/charts
-* [x] Add Linux Monitoring Extension (3.x) to master and agents
-* [x] Scratch folder on agents' temporary storage volume (on-hypervisor SSD), available as `/mnt/scratch`
+* [x] Managed Service Identity for master
+* [x] add Linux Monitoring Extension (3.x) to master and agents
+* [x] scratch folder on agents' temporary storage volume (on-hypervisor SSD), available as `/mnt/scratch`
 * [x] set timezone
 * [x] `bash` completion for `kubectl` in master node
 * [x] remove scale set load balancer (everything must go through `traefik` on the master)
