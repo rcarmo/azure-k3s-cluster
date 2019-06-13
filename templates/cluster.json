@@ -191,7 +191,8 @@
     }
   },
   "variables": {
-    "diagsName": "[toLower(substring(concat('diags0',  uniqueString(resourceGroup().id)), 0, 16))]"
+    "diagsName": "[toLower(substring(concat('diags0',  uniqueString(resourceGroup().id)), 0, 16))]",
+    "virtualMachineContributor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '9980e02c-c2be-4d73-94e8-173b1dc7cf3c')]"
   },
   "resources": [
     {
@@ -243,6 +244,25 @@
       "location": "[resourceGroup().location]"
     },
     {
+      "comment": "Role assignment as Virtual Machine Contributor to each master instance",
+      "apiVersion": "2017-09-01",
+      "type": "Microsoft.Authorization/roleAssignments",
+      "copy": {
+        "name": "masters",
+        "count": "[parameters('masterCount')]"
+      },
+      "name": "[parameters('masterPrefix')]",
+      "properties": {
+        "roleDefinitionId": "[variables('virtualMachineContributor')]",
+        "principalId": "[reference(resourceID('Microsoft.Compute/virtualMachines', parameters('masterPrefix'),copyIndex()), '2017-12-01', 'Full').identity.principalId]",
+        "scope": "[resourceGroup().id]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('masterPrefix'), copyIndex())]",
+        "[concat('Microsoft.ManagedIdentity/userAssignedIdentities/', parameters('masterPrefix'))]"
+      ]
+    },
+    {
       "comments": "Master Node(s)",
       "type": "Microsoft.Compute/virtualMachines",
       "copy": {
@@ -252,9 +272,9 @@
       "identity": {
         "type": "userAssigned",
         "userAssignedIdentities": {
-            "[resourceID('Microsoft.ManagedIdentity/userAssignedIdentities/',parameters('masterPrefix'))]": {}
+          "[resourceID('Microsoft.ManagedIdentity/userAssignedIdentities/',parameters('masterPrefix'))]": {}
         }
-     },
+      },
       "name": "[concat(parameters('masterPrefix'),copyIndex())]",
       "apiVersion": "2019-03-01",
       "location": "[resourceGroup().location]",
