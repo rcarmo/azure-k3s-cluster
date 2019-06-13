@@ -254,7 +254,7 @@
       "name": "[parameters('masterPrefix')]",
       "properties": {
         "roleDefinitionId": "[variables('virtualMachineContributor')]",
-        "principalId": "[reference(resourceID('Microsoft.Compute/virtualMachines', parameters('masterPrefix'),copyIndex()), '2017-12-01', 'Full').identity.principalId]",
+        "principalId": "[reference(resourceID('Microsoft.Compute/virtualMachines', concat(parameters('masterPrefix'), copyIndex())), '2017-12-01', 'Full').identity.principalId]",
         "scope": "[resourceGroup().id]"
       },
       "dependsOn": [
