@@ -236,14 +236,7 @@
         ]
       }
     },
-    {
-      "comments": "Master Node(s) managed Identities",
-      "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
-      "name": "[parameters('masterPrefix')]",
-      "apiVersion": "2018-11-30",
-      "location": "[resourceGroup().location]"
-    },
-    {
+   {
       "comments": "Role assignment as Virtual Machine Contributor to each master instance",
       "apiVersion": "2017-09-01",
       "type": "Microsoft.Authorization/roleAssignments",
@@ -251,15 +244,14 @@
         "name": "masters",
         "count": "[parameters('masterCount')]"
       },
-      "name": "[parameters('masterPrefix')]",
+      "name": "[guid(concat(parameters('masterPrefix'),copyIndex()))]",
       "properties": {
         "roleDefinitionId": "[variables('virtualMachineContributor')]",
         "principalId": "[reference(resourceID('Microsoft.Compute/virtualMachines', concat(parameters('masterPrefix'), copyIndex())), '2017-12-01', 'Full').identity.principalId]",
         "scope": "[resourceGroup().id]"
       },
       "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/', parameters('masterPrefix'), copyIndex())]",
-        "[concat('Microsoft.ManagedIdentity/userAssignedIdentities/', parameters('masterPrefix'))]"
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('masterPrefix'), copyIndex())]"
       ]
     },
     {
@@ -270,10 +262,7 @@
         "count": "[parameters('masterCount')]"
       },
       "identity": {
-        "type": "userAssigned",
-        "userAssignedIdentities": {
-          "[resourceID('Microsoft.ManagedIdentity/userAssignedIdentities/',parameters('masterPrefix'))]": {}
-        }
+        "type": "SystemAssigned"
       },
       "name": "[concat(parameters('masterPrefix'),copyIndex())]",
       "apiVersion": "2019-03-01",
@@ -334,7 +323,6 @@
         }
       },
       "dependsOn": [
-        "[concat('Microsoft.ManagedIdentity/userAssignedIdentities/', parameters('masterPrefix'))]",
         "[concat('Microsoft.Network/networkInterfaces/', parameters('masterPrefix'), copyIndex())]",
         "[concat('Microsoft.Compute/availabilitySets/', 'masters')]",
         "[concat('Microsoft.Storage/storageAccounts/', variables('diagsName'))]"
