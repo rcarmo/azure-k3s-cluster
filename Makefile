@@ -46,7 +46,7 @@ keys:
 params:
 	$(eval STORAGE_ACCOUNT_KEY := $(shell az storage account keys list \
 		--resource-group $(STORAGE_GROUP) \
-    	--account-name $(STORAGE_ACCOUNT_NAME) \
+	    	--account-name $(STORAGE_ACCOUNT_NAME) \
 		--query "[0].value" \
 		--output tsv | tr -d '"'))
 	@mkdir parameters 2> /dev/null; STORAGE_ACCOUNT_KEY=$(STORAGE_ACCOUNT_KEY) python genparams.py > parameters/cluster.json
