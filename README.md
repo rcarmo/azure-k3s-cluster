@@ -26,6 +26,7 @@ Also, a lot of the ARM templating involved (for metrics, managed identities, etc
 * [ ] clean `kubernetes-dashboard` deployment
 * [ ] WIP: sample deployments/pods/charts
 * [ ] WIP: simple Python scale-down helper inspired by [this C# sample](https://github.com/Azure-Samples/azure-scale-set-smart-downscale)
+* [x] re-usable user-assigned service identity instead of system (per-machine)
 * [x] Managed Service Identity for master and role allocations to allow it to manage the scaleset (and the rest of the resource group)
 * [x] add Linux Monitoring Extension (3.x) to master and agents (visible in the "Guest (classic)" metrics namespace in Azure Portal)
 * [x] scratch folder on agents' temporary storage volume (on-hypervisor SSD), available as `/mnt/scratch`
