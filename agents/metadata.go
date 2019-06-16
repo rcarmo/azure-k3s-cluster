@@ -27,20 +27,22 @@ func getInstanceMetadata() *InstanceMetadata {
     q.Add("api-version", "2018-10-01")
     req.URL.RawQuery = q.Encode()
     
-	resp, httpErr := client.Do(req)
-	if httpErr != nil {
-		log.Fatal(httpErr);
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Fatal(err);
 	}
 
-	body, readErr := ioutil.ReadAll(resp.Body)
-	if readErr != nil {
-		log.Fatal(readErr);
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal(err);
 	}
 
 	metadata := InstanceMetadata{}
-	jsonErr := json.Unmarshal(body, &metadata)
-	if jsonErr != nil {
-		log.Fatal(jsonErr)
+	err = json.Unmarshal(body, &metadata)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	return &metadata
