@@ -21,22 +21,22 @@ func getInstanceMetadata() *InstanceMetadata {
 	if err != nil {
 		log.Fatal(err)
 	}
-    req.Header.Add("Metadata", "true")
-    
+	req.Header.Add("Metadata", "true")
+
 	q := req.URL.Query()
-    q.Add("api-version", "2018-10-01")
-    req.URL.RawQuery = q.Encode()
-    
+	q.Add("api-version", "2018-10-01")
+	req.URL.RawQuery = q.Encode()
+
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Fatal(err);
+		log.Fatal(err)
 	}
 
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatal(err);
+		log.Fatal(err)
 	}
 
 	metadata := InstanceMetadata{}
