@@ -104,6 +104,8 @@ packages:
 runcmd:
   - timedatectl set-timezone Europe/Lisbon
   - curl -sfL https://get.k3s.io | sh -
+  # sudoless commands (temporary fix for 0.6.0)
+  - chmod a+r /etc/rancher/k3s/k3s.yaml
   - kubectl completion bash | sudo tee /etc/bash_completion.d/kubectl
   - systemctl enable k3s-helper
   #- systemctl start k3s-helper
