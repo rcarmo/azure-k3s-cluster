@@ -16,7 +16,7 @@ This was originally built as [a Docker Swarm template][adsc], and even though Az
 
 [`k3s`][k3s] is a breath of fresh air, and an opportunity to play around with a simpler, slimmer version of Kubernetes--and break it to see what happens.
 
-Also, a lot of the ARM templating involved (for metrics, managed identities, etc.) lacks comprehensive samples, so this was also a way for me to provide a fully working one.
+Also, a lot of the ARM templating involved (for metrics, managed identities, etc.) lacks comprehensive samples, so this was also a way for me to provide a fully working example that other people can learn from.
 
 ## Roadmap
 
