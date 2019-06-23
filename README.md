@@ -21,11 +21,12 @@ Also, a lot of the ARM templating involved (for metrics, managed identities, etc
 ## Roadmap
 
 * [ ] air-gapped (i.e., standalone) install without `curl`
-* [ ] upgrade to `k3s` 0.6.0 and test its metrics server
+* [ ] upgrade to `k3s` 0.7.0 and test its metrics server
 * [ ] document `cloud-config`
 * [ ] clean `kubernetes-dashboard` deployment
 * [ ] WIP: sample deployments/pods/charts
 * [ ] WIP: simple Python scale-down helper ([blog post](https://taoofmac.com/space/blog/2019/06/15/1740) on how I'm going to do that with managed service identities and the instance metadata service)
+* [x] upgrade to `k3s` 0.6.0
 * [x] re-usable user-assigned service identity instead of system (per-machine)
 * [x] Managed Service Identity for master and role allocations to allow it to manage the scaleset (and the rest of the resource group)
 * [x] add Linux Monitoring Extension (3.x) to master and agents (visible in the "Guest (classic)" metrics namespace in Azure Portal)
