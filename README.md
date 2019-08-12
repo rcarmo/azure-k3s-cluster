@@ -2,9 +2,11 @@
 
 A (WIP) dynamically resizable [`k3s`][k3s] cluster for Azure, based on my [`azure-docker-swarm-cluster`][adsc] project.
 
+![diagram](images/diagram.png)
+
 ## What
 
-This is an Azure Resource Manager template that automatically deploys a [`k3s`][k3s] cluster atop Ubuntu 18.04. This cluster has a single master VMs and a VM scaleset for workers/agents, plus required network infrastructure.
+This is an Azure Resource Manager template that automatically deploys a [`k3s`][k3s] cluster atop Ubuntu 18.04. This cluster has a single master VM and a VM scaleset for workers/agents, plus required network infrastructure.
 
 The template defaults to deploying B-Series VMs (`B1ls`) with the smallest possible managed disk size (S4, 32GB). It also deploys (and mounts) an Azure File Share on all machines with (very) permissive access at `/srv`, which makes it quite easy to run stateful services.
 
@@ -21,11 +23,13 @@ Also, a lot of the ARM templating involved (for metrics, managed identities, etc
 ## Roadmap
 
 * [ ] air-gapped (i.e., standalone) install without `curl`
-* [ ] upgrade to `k3s` 0.7.0 and test its metrics server
+* [ ] test metrics server
 * [ ] document `cloud-config`
 * [ ] clean `kubernetes-dashboard` deployment
 * [ ] WIP: sample deployments/pods/charts
 * [ ] WIP: simple Python scale-down helper ([blog post](https://taoofmac.com/space/blog/2019/06/15/1740) on how I'm going to do that with managed service identities and the instance metadata service)
+* [x] upgrade to `k3s` 0.8.0 
+* [x] upgrade to `k3s` 0.7.0
 * [x] upgrade to `k3s` 0.6.0
 * [x] re-usable user-assigned service identity instead of system (per-machine)
 * [x] Managed Service Identity for master and role allocations to allow it to manage the scaleset (and the rest of the resource group)
