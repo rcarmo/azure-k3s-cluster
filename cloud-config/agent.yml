@@ -10,7 +10,7 @@ write_files:
       # get the  cluster token
       TOKEN=$(wget -nv -q -O - --retry-connrefused --tries=0 --waitretry 5 http://master0:1337/join/$HOSTNAME)
       # TODO: clean this up
-      curl -sfL https://get.k3s.io | K3S_URL=https://master0:6443 K3S_TOKEN=$TOKEN sh -
+      curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v0.9.1 K3S_URL=https://master0:6443 K3S_TOKEN=$TOKEN sh -
   - path: /root/leave-cluster.sh
     permissions: 0755
     content: |
