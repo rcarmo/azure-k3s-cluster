@@ -10,7 +10,7 @@ write_files:
       # get the  cluster token
       TOKEN=$(wget -nv -q -O - --retry-connrefused --tries=0 --waitretry 5 http://master0:1337/join/$HOSTNAME)
       # TODO: clean this up
-      curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v0.9.1 K3S_URL=https://master0:6443 K3S_TOKEN=$TOKEN sh -
+      curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--docker" INSTALL_K3S_VERSION=v1.0.0 K3S_URL=https://master0:6443 K3S_TOKEN=$TOKEN sh -
   - path: /root/leave-cluster.sh
     permissions: 0755
     content: |
@@ -49,24 +49,16 @@ write_files:
       ResourceDisk.Filesystem=ext4
       ResourceDisk.EnableSwap=y
       ResourceDisk.SwapSizeMB=2048
-  - path: /var/lib/rancher/k3s/agent/etc/containerd/config.toml.tmpl
+  - path: /etc/rancher/k3s/registries.yaml
     permissions: 0444
     content: |
-      [plugins.opt]
-      path = "{{ .NodeConfig.Containerd.Opt }}"
-      
-      [plugins.cri]
-      stream_server_address = "{{ .NodeConfig.AgentConfig.NodeName }}"
-      stream_server_port = "10010"
-        [plugins.cri.cni]
-          bin_dir = "{{ .NodeConfig.AgentConfig.CNIBinDir }}"
-          conf_dir = "{{ .NodeConfig.AgentConfig.CNIConfDir }}"
-      
-      [plugins.cri.registry.mirrors]
-        [plugins.cri.registry.mirrors."docker.io"]
-          endpoint = ["https://registry-1.docker.io"]
-        [plugins.cri.registry.mirrors."master0:5000"]
-          endpoint = ["http://master0:5000"]
+      mirrors:
+        #docker.io:
+        #  endpoint:
+        #   - https://registry-1.docker.io
+        registry:
+          endpoint:
+            - http://master0:5000 
 
 mounts:
   - - //${STORAGE_ACCOUNT_NAME}.file.core.windows.net/${SHARE_NAME}

@@ -103,10 +103,9 @@ packages:
 
 runcmd:
   - timedatectl set-timezone Europe/Lisbon
-  - INSTALL_K3S_VERSION=v0.9.1 curl -sfL https://get.k3s.io | sh -
-  # sudoless commands (temporary fix for 0.6.0)
+  - curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--docker" INSTALL_K3S_VERSION=v1.0.0 sh -
   - chmod a+r /etc/rancher/k3s/k3s.yaml
   - kubectl completion bash | sudo tee /etc/bash_completion.d/kubectl
   - systemctl enable k3s-helper
-  #- systemctl start k3s-helper
+  - systemctl start k3s-helper
   - reboot
