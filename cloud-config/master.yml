@@ -64,24 +64,17 @@ write_files:
       ResourceDisk.Filesystem=ext4
       ResourceDisk.EnableSwap=y
       ResourceDisk.SwapSizeMB=2048
-  - path: /var/lib/rancher/k3s/agent/etc/containerd/config.toml.tmpl
+  - path: /etc/rancher/k3s/registries.yaml
     permissions: 0444
     content: |
-      [plugins.opt]
-      path = "{{ .NodeConfig.Containerd.Opt }}"
+      mirrors:
+        #docker.io:
+        #  endpoint:
+        #   - https://registry-1.docker.io
+        private:
+          endpoint:
+            - http://master0:5000 
 
-      [plugins.cri]
-      stream_server_address = "{{ .NodeConfig.AgentConfig.NodeName }}"
-      stream_server_port = "10010"
-        [plugins.cri.cni]
-          bin_dir = "{{ .NodeConfig.AgentConfig.CNIBinDir }}"
-          conf_dir = "{{ .NodeConfig.AgentConfig.CNIConfDir }}"
-
-      [plugins.cri.registry.mirrors]
-        [plugins.cri.registry.mirrors."docker.io"]
-          endpoint = ["https://registry-1.docker.io"]
-        [plugins.cri.registry.mirrors."master0:5000"]
-          endpoint = ["http://master0:5000"]
 
 mounts:
   - - //${STORAGE_ACCOUNT_NAME}.file.core.windows.net/${SHARE_NAME}
@@ -100,6 +93,7 @@ packages:
   - fail2ban
   - curl
   - python-bottle
+  - docker.io
 
 runcmd:
   - timedatectl set-timezone Europe/Lisbon
@@ -107,5 +101,5 @@ runcmd:
   - chmod a+r /etc/rancher/k3s/k3s.yaml
   - kubectl completion bash | sudo tee /etc/bash_completion.d/kubectl
   - systemctl enable k3s-helper
-  - systemctl start k3s-helper
+  #- systemctl start k3s-helper
   - reboot

@@ -56,7 +56,7 @@ write_files:
         #docker.io:
         #  endpoint:
         #   - https://registry-1.docker.io
-        registry:
+        private:
           endpoint:
             - http://master0:5000 
 
@@ -76,6 +76,7 @@ packages:
   #- vim
   - fail2ban
   #- curl
+  - docker.io
 
 runcmd:
   - timedatectl set-timezone Europe/Lisbon
