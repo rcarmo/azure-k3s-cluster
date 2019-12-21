@@ -27,8 +27,12 @@ Also, a lot of the ARM templating involved (for metrics, managed identities, etc
 * [ ] document `cloud-config`
 * [ ] clean `kubernetes-dashboard` deployment
 * [ ] WIP: sample deployments/pods/charts
+* [ ] TODO: Leverage [Instance Protection](https://docs.microsoft.com/en-us/azure/virtual-machine-scale-sets/virtual-machine-scale-sets-instance-protection) and [Scale-In Policies](https://docs.microsoft.com/en-us/azure/virtual-machine-scale-sets/virtual-machine-scale-sets-scale-in-policy)
 * [ ] WIP: simple Python scale-down helper ([blog post](https://taoofmac.com/space/blog/2019/06/15/1740) on how I'm going to do that with managed service identities and the instance metadata service)
 * [ ] support an (insecure) private registry hosted on the master node (requires using `docker` instead of `containerd`, but saves a lot of hassle when doing tests)
+* [x] Handle eviction notifications
+* [x] Use Spot Instances for node pool
+* [x] upgrade to `k3s` 1.0.1 
 * [x] upgrade to `k3s` 1.0.0 
 * [x] upgrade to `k3s` 0.8.0 
 * [x] upgrade to `k3s` 0.7.0
