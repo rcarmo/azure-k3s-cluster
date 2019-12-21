@@ -1,5 +1,5 @@
 {
-  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
     "masterPrefix": {
@@ -84,19 +84,21 @@
         "description": "Agent instance size"
       },
       "allowedValues": [
-        "Standard_B1ls",
-        "Standard_B1ms",
-        "Standard_B1s",
-        "Standard_B2ms",
-        "Standard_B2s",
-        "Standard_B4ms",
-        "Standard_B8ms",
+        "Standard_A1_v2",
+        "Standard_A2_v2",
+        "Standard_A4_v2",
+        "Standard_A8_v2",
+        "Standard_A2m_v2",
+        "Standard_A4m_v2",
+        "Standard_A8m_v2",
         "Standard_DS1_v2",
         "Standard_DS2_v2",
         "Standard_DS3_v2",
         "Standard_DS4_v2",
-        "Standard_F1",
-        "Standard_F2"
+        "Standard_F1s",
+        "Standard_F2s_v2",
+        "Standard_F4s_v2",
+        "Standard_F8s_v2"
       ]
     },
     "adminUsername": {
@@ -1088,6 +1090,11 @@
           "mode": "Manual"
         },
         "virtualMachineProfile": {
+          "priority": "Spot",
+          "evictionPolicy": "delete",
+          "billingProfile": {
+            "maxPrice": -1
+          },
           "osProfile": {
             "computerNamePrefix": "[parameters('agentPrefix')]",
             "adminUsername": "[parameters('adminUsername')]",
@@ -1999,18 +2006,6 @@
         "publicIPAllocationMethod": "Dynamic",
         "dnsSettings": {
           "domainNameLabel": "[concat(resourceGroup().name, '-', parameters('masterPrefix'), copyIndex())]"
-        }
-      }
-    },
-    {
-      "type": "Microsoft.Network/publicIPAddresses",
-      "name": "[parameters('agentPrefix')]",
-      "location": "[resourceGroup().location]",
-      "apiVersion": "2015-06-15",
-      "properties": {
-        "publicIPAllocationMethod": "Dynamic",
-        "dnsSettings": {
-          "domainNameLabel": "[concat(resourceGroup().name, '-', parameters('agentPrefix'),'-lb')]"
         }
       }
     },
