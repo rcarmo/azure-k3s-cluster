@@ -45,14 +45,14 @@ write_files:
           req = Request(METADATA_URL)
           req.add_header('Metadata', 'true')
           res = urlopen(req)
-          data = loads(resp.read())
+          data = loads(res.read())
           return data
 
       def acknowledge_event(event_id):
           req = Request(METADATA_URL, urlencode({"StartRequests":[{"EventId":event_id}]}))
           req.add_header('Metadata', 'true')
           res = urlopen(req)
-          data = resp.read()
+          data = res.read()
           return data
 
       def handle_events(data):
