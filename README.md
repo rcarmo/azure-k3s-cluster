@@ -10,7 +10,7 @@ This is an Azure Resource Manager template that automatically deploys a [`k3s`][
 
 The template defaults to deploying B-Series VMs (`B1ls`) with the smallest possible managed disk size (S4, 32GB). It also deploys (and mounts) an Azure File Share on all machines with (very) permissive access at `/srv`, which makes it quite easy to run stateful services.
 
-The key aspect of this template is that _you can add and remove agents at will_ simply by resizing the VM scaleset - the cluster comes with a few (very simple) helper scripts that allow nodes to join and leave the cluster as they are created/destroyed, and the `k3s` scheduler will redeploy pods as needed.
+The key aspect of this template is that _you can add and remove agents at will_ simply by resizing the VM scaleset, which is very handy when running the node pool as spot instances - the cluster comes with a few (very simple) helper scripts that allow nodes to join and leave the cluster as they are created/destroyed, and the `k3s` scheduler will redeploy pods as needed.
 
 ## Why
 
@@ -18,7 +18,7 @@ This was originally built as [a Docker Swarm template][adsc], and even though Az
 
 [`k3s`][k3s] is a breath of fresh air, and an opportunity to play around with a simpler, slimmer version of Kubernetes--and break it to see what happens.
 
-Also, a lot of the ARM templating involved (for metrics, managed identities, etc.) lacks comprehensive samples, so this was also a way for me to provide a fully working example that other people can learn from.
+Also, a lot of the ARM templating involved (for metrics, managed identities, etc.) lacked comprehensive samples when I started the project, so this was also a way for me to provide a fully working example that other people can learn from.
 
 ## Roadmap
 
