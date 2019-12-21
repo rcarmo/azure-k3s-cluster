@@ -54,13 +54,13 @@ params = {
         "value": slurp("agent.yml")
     },
     "masterSize": {
-        "value": "Standard_B2ms"
+        "value": "Standard_B2s"
     },
     "agentSize": {
         "value": "Standard_F2s_v2"
     },
     "diskType": {
-        "value": "StandardSSD_LRS"
+        "value": "StandardHDD_LRS"
     }
 }
 
