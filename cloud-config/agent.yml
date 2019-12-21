@@ -1,6 +1,13 @@
 #cloud-config
 
 write_files:
+  - path: /etc/docker/daemon.json
+    permissions: 0644
+    content: |
+      {
+        "log-driver": "json-file",
+        "log-opts": {"max-size": "10m", "max-file": "5"}
+      }
   - path: /root/join-cluster.sh
     permissions: 0755
     content: |
@@ -9,8 +16,8 @@ write_files:
       HOSTNAME=`hostname`
       # get the  cluster token
       TOKEN=$(wget -nv -q -O - --retry-connrefused --tries=0 --waitretry 5 http://master0:1337/join/$HOSTNAME)
-      # TODO: clean this up
-      curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--docker" INSTALL_K3S_VERSION=v1.0.0 K3S_URL=https://master0:6443 K3S_TOKEN=$TOKEN sh -
+      # install k3s and join the cluster
+      curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--docker" INSTALL_K3S_VERSION=v1.0.1 K3S_URL=https://master0:6443 K3S_TOKEN=$TOKEN sh -
   - path: /root/leave-cluster.sh
     permissions: 0755
     content: |
@@ -18,6 +25,59 @@ write_files:
       HOSTNAME=`hostname`
       # signal the master to drain services from our node
       wget -nv -q -O - --retry-connrefused --tries=10 --waitretry 5 http://master0:1337/drain/$HOSTNAME
+  - path: /root/spot-helper.py
+    permissions: 0755
+    content: |
+      #!/usr/bin/env python
+
+      # Leave the cluster in an orderly fashion when the spot instance is preempted or scheduled for maintenance
+
+      from subprocess import check_output
+      from socket import gethostname
+      from time import sleep
+      from json import loads
+      from urllib2 import Request, urlopen
+      from urllib import urlencode
+
+      METADATA_URL = "http://169.254.169.254/metadata/scheduledevents?api-version=2017-11-01"
+      
+      def get_scheduled_events():
+          req = Request(METADATA_URL)
+          req.add_header('Metadata', 'true')
+          res = urlopen(req)
+          data = loads(resp.read())
+          return data
+
+      def acknowledge_event(event_id):
+          req = Request(METADATA_URL, urlencode({"StartRequests":[{"EventId":event_id}]}))
+          req.add_header('Metadata', 'true')
+          res = urlopen(req)
+          data = resp.read()
+          return data
+
+      def handle_events(data):
+          hostname = gethostname()
+          for event in data['Events']:
+              if hostname in event['Resources'] and event['EventType'] in ['Reboot', 'Redeploy', 'Preempt']:
+                  check_output('/root/leave-cluster.sh', shell=True)
+                  acknowledge_event(event['EventId'])
+
+      if __name__ == '__main__':
+          while(True):
+             sleep(15)
+             handle_events(get_scheduled_events())
+  - path: /etc/systemd/system/spot-helper.service
+    permissions: 0444
+    content: |
+      [Unit]
+      Description=Azure Spot Instance Events
+      DefaultDependencies=no
+      After=multi-user.target
+      [Service]
+      Type=oneshot
+      ExecStart=/root/spot-helper.py
+      [Install]
+      WantedBy=multi-user.target
   - path: /etc/systemd/system/k3s-join.service
     permissions: 0444
     content: |
@@ -82,6 +142,7 @@ runcmd:
   - timedatectl set-timezone Europe/Lisbon
   - systemctl enable k3s-join
   - systemctl enable k3s-leave
+  - systemctl enable spot-helper
   #- systemctl start k3s-leave
   #- systemctl start k3s-join
   - reboot
