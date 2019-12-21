@@ -57,7 +57,7 @@ params = {
         "value": "Standard_B2ms"
     },
     "agentSize": {
-        "value": "Standard_B2s"
+        "value": "Standard_F2s_v2"
     },
     "diskType": {
         "value": "StandardSSD_LRS"
