@@ -166,7 +166,7 @@ resize-agents-up:
 	az vmss update \
 	   --resource-group $(COMPUTE_GROUP) \
 	   --name $(VMSS_NAME) \
-	   --set sku.name=Standard_F8s \
+	   --set sku.name=Standard_F8sv2 \
 	&& az vmss update-instances \
 	   --resource-group $(COMPUTE_GROUP) \
 	   --name $(VMSS_NAME) \
@@ -177,7 +177,7 @@ resize-agents-down:
 	az vmss update \
 	   --resource-group $(COMPUTE_GROUP) \
 	   --name $(VMSS_NAME) \
-	   --set sku.name=Standard_B2s \
+	   --set sku.name=Standard_F2sv2 \
 	&& az vmss update-instances \
 	   --resource-group $(COMPUTE_GROUP) \
 	   --name $(VMSS_NAME) \
