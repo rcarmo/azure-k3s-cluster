@@ -1,6 +1,13 @@
 #cloud-config
 
 write_files:
+  - path: /etc/docker/daemon.json
+    permissions: 0644
+    content: |
+      {
+        "log-driver": "json-file",
+        "log-opts": {"max-size": "10m", "max-file": "5"}
+      }
   - path: /root/k3s-helper.py
     permissions: 0755
     content: |
@@ -97,7 +104,7 @@ packages:
 
 runcmd:
   - timedatectl set-timezone Europe/Lisbon
-  - curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--docker" INSTALL_K3S_VERSION=v1.0.0 sh -
+  - curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--docker" INSTALL_K3S_VERSION=v1.0.1 sh -
   - chmod a+r /etc/rancher/k3s/k3s.yaml
   - kubectl completion bash | sudo tee /etc/bash_completion.d/kubectl
   - systemctl enable k3s-helper
