@@ -60,7 +60,7 @@ params = {
         "value": "Standard_F2s_v2"
     },
     "diskType": {
-        "value": "StandardHDD_LRS"
+        "value": "Standard_LRS"
     }
 }
 
