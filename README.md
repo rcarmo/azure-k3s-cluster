@@ -32,6 +32,7 @@ Also, a lot of the ARM templating involved (for metrics, managed identities, etc
 * [ ] support an (insecure) private registry hosted on the master node (requires using `docker` instead of `containerd`, but saves a lot of hassle when doing tests)
 * [x] Handle eviction notifications
 * [x] Use Spot Instances for node pool
+* [x] upgrade to `k3s` v1.17.0+k3s.1 
 * [x] upgrade to `k3s` 1.0.1 
 * [x] upgrade to `k3s` 1.0.0 
 * [x] upgrade to `k3s` 0.8.0 
