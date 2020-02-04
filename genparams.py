@@ -3,7 +3,7 @@ from base64 import b64encode
 from os import environ
 from json import dumps
 from os.path import exists, join
-from sys import argv, stderr, stdout
+from sys import stderr, stdout
 from string import Template
 
 def slurp(filename, as_template=True):
