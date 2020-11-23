@@ -31,7 +31,7 @@ write_files:
               untagged = map(lambda x: x.split()[0], filter(lambda x: '<none>' in x, nodes.split("\n")))
               down = map(lambda x: x.split()[0], filter(lambda x: 'NotReady' in x, nodes.split("\n")))
               for node in untagged:
-                  check_output('kubectl label ' + node + ' kubernetes.io/role=worker', shell=True)
+                  check_output('kubectl label node ' + node + ' kubernetes.io/role=worker', shell=True)
               for node in down:
                   check_output('kubectl cordon ' + node, shell=True)
                   check_output('kubectl delete node ' + node, shell=True)
