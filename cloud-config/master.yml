@@ -112,13 +112,9 @@ packages:
 runcmd:
   - timedatectl set-timezone Europe/Lisbon
   - curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--docker" INSTALL_K3S_VERSION=v1.19.4+k3s1 sh -
-  - kubectl completion bash | sudo tee /etc/bash_completion.d/kubectl
+  - kubectl completion bash | tee /etc/bash_completion.d/kubectl
   - systemctl enable k3s-helper
-  - systemctl start k3s-helper
   # remove snapd so it doesn't cause extra load on smaller VMs
-  - snap remove lxd
-  - snap remove core18
-  - snap remove snapd
   - apt-get purge -y snapd unattended-upgrades
   - rm -rf /snap /var/snap /var/lib/snapd /var/log/unattended-upgrades
   - apt-get dist-upgrade -y

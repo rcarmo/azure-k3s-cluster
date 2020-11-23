@@ -146,9 +146,8 @@ runcmd:
   #- systemctl start k3s-leave
   #- systemctl start k3s-join
   # remove snapd so it doesn't cause extra load on smaller VMs
-  - snap remove lxd
-  - snap remove core18
-  - snap remove snapd
-  - apt purge -y snapd unattended-upgrades
+  - apt-get purge -y snapd unattended-upgrades
   - rm -rf /snap /var/snap /var/lib/snapd /var/log/unattended-upgrades
+  - apt-get dist-upgrade -y
+  - apt-get autoremove -y
   - reboot
