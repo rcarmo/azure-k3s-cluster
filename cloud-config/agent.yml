@@ -126,9 +126,9 @@ mounts:
     - cifs
     - vers=3.0,username=${STORAGE_ACCOUNT_NAME},password=${STORAGE_ACCOUNT_KEY},dir_mode=0770,file_mode=0660,uid=1000,gid=1000,noperm,mfsymlinks,iocharset=utf8
 
-apt_update: true
-apt_upgrade: true
-
+apt:
+  package_update: true
+  package_upgrade: true
 packages:
   - ntp
   #- tmux
@@ -145,4 +145,10 @@ runcmd:
   - systemctl enable spot-helper
   #- systemctl start k3s-leave
   #- systemctl start k3s-join
+  # remove snapd so it doesn't cause extra load on smaller VMs
+  - snap remove lxd
+  - snap remove core18
+  - snap remove snapd
+  - apt purge -y snapd unattended-upgrades
+  - rm -rf /snap /var/snap /var/lib/snapd /var/log/unattended-upgrades
   - reboot

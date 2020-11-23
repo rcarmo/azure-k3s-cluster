@@ -1,6 +1,10 @@
 #cloud-config
 
 write_files:
+  - path: /etc/rancher/k3s/config.yaml
+    permissions: 0644
+    content: |
+      write-kubeconfig-mode: "0644"
   - path: /etc/docker/daemon.json
     permissions: 0644
     content: |
@@ -11,7 +15,7 @@ write_files:
   - path: /root/k3s-helper.py
     permissions: 0755
     content: |
-      #!/usr/bin/env python
+      #!/usr/bin/env python3
       from bottle import get, run, abort
       from subprocess import check_output
       from socket import gethostname
@@ -36,6 +40,7 @@ write_files:
       def token(hostname):
           try:
               check_output('kubectl uncordon ' + hostname, shell=True)
+              check_output('kubectl label nodes ' + hostname + ' kubernetes.io/role=worker', shell=True)
           except:
               pass
           return check_output('cat /var/lib/rancher/k3s/server/node-token', shell=True).strip()
@@ -89,9 +94,9 @@ mounts:
     - cifs
     - vers=3.0,username=${STORAGE_ACCOUNT_NAME},password=${STORAGE_ACCOUNT_KEY},dir_mode=0770,file_mode=0660,uid=1000,gid=1000,noperm,mfsymlinks,iocharset=utf8
 
-apt_update: true
-apt_upgrade: true
-
+apt:
+  package_update: true
+  package_upgrade: true
 packages:
   - ntp
   - tmux
@@ -99,14 +104,21 @@ packages:
   - vim
   - fail2ban
   - curl
-  - python-bottle
+  - python3-bottle
   - docker.io
 
 runcmd:
   - timedatectl set-timezone Europe/Lisbon
   - curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--docker" INSTALL_K3S_VERSION=v1.19.4+k3s1 sh -
-  - chmod a+r /etc/rancher/k3s/k3s.yaml
   - kubectl completion bash | sudo tee /etc/bash_completion.d/kubectl
   - systemctl enable k3s-helper
-  #- systemctl start k3s-helper
+  - systemctl start k3s-helper
+  # remove snapd so it doesn't cause extra load on smaller VMs
+  - snap remove lxd
+  - snap remove core18
+  - snap remove snapd
+  - apt-get purge -y snapd unattended-upgrades
+  - rm -rf /snap /var/snap /var/lib/snapd /var/log/unattended-upgrades
+  - apt-get dist-upgrade -y
+  - apt-get autoremove -y
   - reboot
