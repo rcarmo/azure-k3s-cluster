@@ -28,7 +28,7 @@ write_files:
   - path: /root/spot-helper.py
     permissions: 0755
     content: |
-      #!/usr/bin/env python
+      #!/usr/bin/env python3
 
       # Leave the cluster in an orderly fashion when the spot instance is preempted or scheduled for maintenance
 
@@ -36,8 +36,8 @@ write_files:
       from socket import gethostname
       from time import sleep
       from json import loads
-      from urllib2 import Request, urlopen
-      from urllib import urlencode
+      from urllib.request import Request, urlopen
+      from urllib.parse import urlencode
 
       METADATA_URL = "http://169.254.169.254/metadata/scheduledevents?api-version=2017-11-01"
       
