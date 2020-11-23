@@ -13,7 +13,7 @@ def slurp(filename, as_template=True):
             buffer = Template(config.read()).safe_substitute(environ)
         else:
             buffer = config.read()
-    return b64encode(bytes(buffer)).decode('utf-8')
+    return b64encode(bytes(buffer, 'utf-8')).decode()
 
 ADMIN_USERNAME = environ['ADMIN_USERNAME']
 OWN_PUBKEY = join(environ['HOME'],'.ssh','id_rsa.pub')
