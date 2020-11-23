@@ -6,7 +6,7 @@ A (WIP) dynamically resizable [`k3s`][k3s] cluster for Azure, based on my [`azur
 
 ## What
 
-This is an Azure Resource Manager template that automatically deploys a [`k3s`][k3s] cluster atop Ubuntu 18.04. This cluster has a single master VM and a VM scaleset for workers/agents, plus required network infrastructure.
+This is an Azure Resource Manager template that automatically deploys a [`k3s`][k3s] cluster atop Ubuntu 20.04. This cluster has a single master VM and a VM scaleset for workers/agents, plus required network infrastructure.
 
 The template defaults to deploying B-Series VMs (`B1ls`) with the smallest possible managed disk size (S4, 32GB). It also deploys (and mounts) an Azure File Share on all machines with (very) permissive access at `/srv`, which makes it quite easy to run stateful services.
 
@@ -30,12 +30,15 @@ Also, a lot of the ARM templating involved (for metrics, managed identities, etc
 * [ ] TODO: Leverage [Instance Protection](https://docs.microsoft.com/en-us/azure/virtual-machine-scale-sets/virtual-machine-scale-sets-instance-protection) and [Scale-In Policies](https://docs.microsoft.com/en-us/azure/virtual-machine-scale-sets/virtual-machine-scale-sets-scale-in-policy)
 * [ ] WIP: simple Python scale-down helper ([blog post](https://taoofmac.com/space/blog/2019/06/15/1740) on how I'm going to do that with managed service identities and the instance metadata service)
 * [ ] support an (insecure) private registry hosted on the master node (requires using `docker` instead of `containerd`, but saves a lot of hassle when doing tests)
+* [x] temporarily remove advanced Azure Linux diagnostics extensions (3.0) due to incompatibility with Ubuntu 20.04 (extension looks for `python` instead of `python3`)
+* [x] update Azure templates, helper scripts and `cloud-config` for Ubuntu 20.04 and `python3`
+* [x] upgrade to `k3s` v1.19.4+k3s1
 * [x] Handle eviction notifications
 * [x] Use Spot Instances for node pool
-* [x] upgrade to `k3s` v1.17.0+k3s.1 
-* [x] upgrade to `k3s` 1.0.1 
-* [x] upgrade to `k3s` 1.0.0 
-* [x] upgrade to `k3s` 0.8.0 
+* [x] upgrade to `k3s` v1.17.0+k3s.1
+* [x] upgrade to `k3s` 1.0.1
+* [x] upgrade to `k3s` 1.0.0
+* [x] upgrade to `k3s` 0.8.0
 * [x] upgrade to `k3s` 0.7.0
 * [x] upgrade to `k3s` 0.6.0
 * [x] re-usable user-assigned service identity instead of system (per-machine)
