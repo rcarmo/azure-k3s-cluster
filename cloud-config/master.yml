@@ -88,7 +88,12 @@ write_files:
         private:
           endpoint:
             - http://master0:5000 
-
+    # If you change the SSH port, don't forget to edit this accordingly
+    #- path: /etc/fail2ban/jail.d/defaults-debian.conf
+    #  content: |
+    #    [sshd]
+    #    enabled = true
+    #    port = 22
 
 mounts:
   - - //${STORAGE_ACCOUNT_NAME}.file.core.windows.net/${SHARE_NAME}
