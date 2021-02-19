@@ -1,6 +1,11 @@
 #cloud-config
 
 write_files:
+  - path: /etc/ssh/sshd_config
+    append: true
+    content: |
+      Port 2211
+      Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr
   - path: /etc/rancher/k3s/config.yaml
     permissions: 0644
     content: |
