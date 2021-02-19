@@ -581,7 +581,7 @@
               "priority": 1000,
               "sourceAddressPrefix": "*",
               "protocol": "Tcp",
-              "destinationPortRange": "22",
+              "destinationPortRange": "2211",
               "access": "Allow",
               "direction": "Inbound",
               "sourcePortRange": "*",
