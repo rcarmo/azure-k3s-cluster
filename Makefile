@@ -22,7 +22,7 @@ SSH_KEY_FILES:=$(ADMIN_USERNAME).pem $(ADMIN_USERNAME).pub
 SSH_KEY:=$(ADMIN_USERNAME).pem
 
 # Do not output warnings, do not validate or add remote host keys (useful when doing successive deployments or going through the load balancer)
-SSH_TO_MASTER:=ssh -q -A -i keys/$(SSH_KEY) $(ADMIN_USERNAME)@$(MASTER_FQDN) -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
+SSH_TO_MASTER:=ssh -p 2211 -q -A -i keys/$(SSH_KEY) $(ADMIN_USERNAME)@$(MASTER_FQDN) -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
 
 # dump resource groups
 resources:
