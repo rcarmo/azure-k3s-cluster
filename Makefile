@@ -101,6 +101,14 @@ destroy-storage:
 		--name $(STORAGE_GROUP) \
 		--no-wait
 
+destroy-cluster:
+	az group delete \
+		--name $(COMPUTE_GROUP) \
+		--no-wait
+	az group delete \
+		--name $(STORAGE_GROUP) \
+		--no-wait
+		
 # SSH to master node
 proxy:
 	-cat keys/cluster.pem | ssh-add -k -
