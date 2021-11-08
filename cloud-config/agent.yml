@@ -113,10 +113,7 @@ write_files:
     permissions: 0444
     content: |
       mirrors:
-        #docker.io:
-        #  endpoint:
-        #   - https://registry-1.docker.io
-        private:
+        docker.io:
           endpoint:
             - http://master0:5000 
 
