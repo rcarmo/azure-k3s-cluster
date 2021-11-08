@@ -38,6 +38,9 @@ params = {
     "masterCount": { 
         "value": int(environ.get('MASTER_COUNT', 1))
     },
+    "masterSSHPort": { 
+        "value": int(environ.get('SSH_PORT', 22))
+    },
     "masterCustomData": {
         "value": slurp("master.yml")
     },

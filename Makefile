@@ -12,6 +12,7 @@ export TIMESTAMP=`date "+%Y-%m-%d-%H-%M-%S"`
 export FILE_SHARES=config data registry
 export STORAGE_ACCOUNT_NAME?=shared0$(shell echo $(MASTER_FQDN)|shasum|base64|tr '[:upper:]' '[:lower:]'|cut -c -16)
 export SHARE_NAME?=data
+export SSH_PORT?=2211
 export SHELL=/bin/bash
 
 
@@ -22,7 +23,7 @@ SSH_KEY_FILES:=$(ADMIN_USERNAME).pem $(ADMIN_USERNAME).pub
 SSH_KEY:=$(ADMIN_USERNAME).pem
 
 # Do not output warnings, do not validate or add remote host keys (useful when doing successive deployments or going through the load balancer)
-SSH_TO_MASTER:=ssh -p 2211 -q -A -i keys/$(SSH_KEY) $(ADMIN_USERNAME)@$(MASTER_FQDN) -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
+SSH_TO_MASTER:=ssh -p $(SSH_PORT) -q -A -i keys/$(SSH_KEY) $(ADMIN_USERNAME)@$(MASTER_FQDN) -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
 
 # dump resource groups
 resources:
@@ -49,7 +50,7 @@ params:
 	    	--account-name $(STORAGE_ACCOUNT_NAME) \
 		--query "[0].value" \
 		--output tsv | tr -d '"'))
-	@mkdir parameters 2> /dev/null; STORAGE_ACCOUNT_KEY=$(STORAGE_ACCOUNT_KEY) python genparams.py > parameters/cluster.json
+	@mkdir parameters 2> /dev/null; STORAGE_ACCOUNT_KEY=$(STORAGE_ACCOUNT_KEY) python3 genparams.py > parameters/cluster.json
 
 # Cleanup parameters
 clean:
@@ -122,6 +123,12 @@ view-deployment:
 		--resource-group $(COMPUTE_GROUP) \
 		--name cli-$(LOCATION) \
 		--query "[].{OperationID:operationId,Name:properties.targetResource.resourceName,Type:properties.targetResource.resourceType,State:properties.provisioningState,Status:properties.statusCode}" \
+		--output table
+
+# Watch deployment
+watch-deployment:
+	watch az resource list \
+		--resource-group acme-prod-k3s-compute \
 		--output table
 
 # List VMSS instances
@@ -219,3 +226,4 @@ list-endpoints:
 		--resource-group $(COMPUTE_GROUP) \
 		--query '[].{dnsSettings:dnsSettings.fqdn}' \
 		--output table
+

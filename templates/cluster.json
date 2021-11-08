@@ -21,6 +21,13 @@
         5
       ]
     },
+    "masterSSHPort": {
+      "type": "int",
+      "defaultValue": 22,
+      "metadata": {
+        "description": "Port number for SSH access"
+      }
+    },
     "masterSize": {
       "type": "string",
       "defaultValue": "Standard_B1ls",
@@ -581,7 +588,7 @@
               "priority": 1000,
               "sourceAddressPrefix": "*",
               "protocol": "Tcp",
-              "destinationPortRange": "2211",
+              "destinationPortRange": "[parameters('masterSSHPort')]",
               "access": "Allow",
               "direction": "Inbound",
               "sourcePortRange": "*",
