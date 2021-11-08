@@ -89,7 +89,7 @@ write_files:
     permissions: 0444
     content: |
       mirrors:
-        private:
+        "master0:5000":
           endpoint:
             - http://master0:5000 
     # If you change the SSH port, don't forget to edit this accordingly

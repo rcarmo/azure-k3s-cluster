@@ -16,15 +16,26 @@ spec:
         app: registry
     spec:
       tolerations:
-      - key: "node-role.kubernetes.io/master"
+      - key: "node-role.kubernetes.io/worker"
         operator: "Equal"
         value: "true"
         effect: "NoSchedule"
       containers:
       - name: registry
         image: registry:2
+        resources:
+          limits:
+            cpu: 100m
+            memory: 200M
+        env:
+        - name: REGISTRY_HTTP_ADDR
+          value: :5000
+        - name: REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY
+          value: /var/lib/registry
         ports:
         - containerPort: 5000
+          name: registry
+          protocol: TCP
         volumeMounts:
         - mountPath: /var/lib/registry
           name: data-volume
@@ -49,4 +60,4 @@ spec:
     name: registry
   externalIPs:
     - 10.1.0.10
-  
+

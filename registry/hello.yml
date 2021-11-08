@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hello
+  namespace: test
+spec:
+  containers:
+  - name: hello
+    image: master0:5000/hello-world:latest
+    resources:
+      limits:
+        cpu: 100m
+        memory: 50Mi
