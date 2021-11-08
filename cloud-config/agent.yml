@@ -113,7 +113,7 @@ write_files:
     permissions: 0444
     content: |
       mirrors:
-        docker.io:
+        private:
           endpoint:
             - http://master0:5000 
 
