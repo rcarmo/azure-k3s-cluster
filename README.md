@@ -8,7 +8,7 @@ A (WIP) dynamically resizable [`k3s`][k3s] cluster for Azure, based on my [`azur
 
 This is an Azure Resource Manager template that automatically deploys a [`k3s`][k3s] cluster atop Ubuntu 20.04. This cluster has a single master VM and a VM scaleset for workers/agents, plus required network infrastructure.
 
-The template defaults to deploying B-Series VMs (`B1ls`) with the smallest possible managed disk size (S4, 32GB). It also deploys (and mounts) an Azure File Share on all machines with (very) permissive access at `/srv`, which makes it quite easy to run stateful services.
+The template defaults to deploying B-Series VMs (`B1ls`) with the smallest possible managed disk size (S4, 32GB). It also deploys (and mounts) an Azure File Share on all machines with (very) permissive access at `/srv`, which makes it quite easy to run stateful services without messing about with volume claims.
 
 The key aspect of this template is that _you can add and remove agents at will_ simply by resizing the VM scaleset, which is very handy when running the node pool as spot instances - the cluster comes with a few (very simple) helper scripts that allow nodes to join and leave the cluster as they are created/destroyed, and the `k3s` scheduler will redeploy pods as needed.
 
@@ -29,7 +29,8 @@ Also, a lot of the ARM templating involved (for metrics, managed identities, etc
 * [ ] WIP: sample deployments/pods/charts
 * [ ] TODO: Leverage [Instance Protection](https://docs.microsoft.com/en-us/azure/virtual-machine-scale-sets/virtual-machine-scale-sets-instance-protection) and [Scale-In Policies](https://docs.microsoft.com/en-us/azure/virtual-machine-scale-sets/virtual-machine-scale-sets-scale-in-policy)
 * [ ] WIP: simple Python scale-down helper ([blog post](https://taoofmac.com/space/blog/2019/06/15/1740) on how I'm going to do that with managed service identities and the instance metadata service)
-* [ ] support an (insecure) private registry hosted on the master node (requires using `docker` instead of `containerd`, but saves a lot of hassle when doing tests)
+* [ ] support an easy way to automatically redeploy charts and manifests when the compute resource group is recreated (`/srv/autostart`?)
+* [x] support an (insecure) private registry hosted on the master node (requires using `docker` instead of `containerd`, but saves a lot of hassle when doing tests)
 * [x] allow setting SSH_PORT via `Makefile`
 * [x] upgrade to `k3s` v1.22.3+k3s1
 * [x] temporarily remove Docker support so that I can explore `k3c`
@@ -68,7 +69,8 @@ Also, a lot of the ARM templating involved (for metrics, managed identities, etc
 * `make deploy-storage` - deploys shared storage
 * `make params` - generates ARM template parameters
 * `make deploy-compute` - deploys cluster resources and pre-provisions Docker on all machines
-* `make view-deployment` - view deployment progress
+* `make view-deployment` - view deployment status
+* `make watch-deployment` - watch deployment progress
 * `make list-agents` - lists all agent VMs
 * `make scale-agents-<number>` - scales the agent VM scale set to `<number>` instances, i.e., `make scale-10` will resize it (up or down) to 10 VMs
 * `make stop-agents` - stops all agents
@@ -97,7 +99,7 @@ Also, a lot of the ARM templating involved (for metrics, managed identities, etc
 
 ## Requirements
 
-* [Python][p]
+* [Python 3][p]
 * The [Azure CLI][az] (`pip install -U -r requirements.txt` will install it)
 * GNU `make` (you can just read through the `Makefile` and type the commands yourself)
 
@@ -109,13 +111,29 @@ Upon provisioning, all agents try to obtain a token and join the cluster. Upon r
 
 This is done in the simplest possible way, by using `cloud-init` to bootstrap a few helper scripts that are invoked upon shutdown and (re)boot. Check the YAML files for details.
 
-## Provisioning Flow
+## Provisioning Notes
+
+The cluster is actually split across two resource groups (`-storage` and `-compute`). 
+
+The `-storage` resource group contains an Azure Storage Account with an Azure Files (SMB) share that is mounted on all the nodes. This makes it trivial to deploy the cluster, work on it for a few hours, store your manifests and data on `/srv`, destroy the `-compute` resources to save costs and spin them up again against the same `-storage` the next day.
+
+## Deployment Notes
 
 To avoid using VM extensions (which are nice, but opaque to most people used to using `cloud-init`) and to ensure each fresh deployment runs the latest Docker version, VMs are provisioned using `customData` in their respective ARM templates.
 
-`cloud-init` files and SSH keys are then packed into the JSON parameters file and submitted as a single provisioning transaction, and upon first boot Ubuntu takes the `cloud-init` file and provisions the machine accordingly.
+`cloud-init` files and SSH keys are then packed into the JSON parameters file and submitted as a single provisioning transaction, and upon first boot of a node (master or agent) Ubuntu takes the `cloud-init` file and provisions the machine accordingly.
 
 See [`azure-docker-swarm-cluster`][adsc] for more details.
+
+## Private Registry
+
+Deploying `registry/registry.yml` will set up a container registry on the master node that uses the shared Azure Files storage (mounted in `/srv`) as backing store.
+
+The container registry is "insecure" in that it does not require authentication nor uses HTTPS, but it is accessible only to the cluster nodes and does not require setting up any kind of certificates.
+
+This makes it _very_ easy to use `docker` on the master node to manage images, and having the registry mapped to the SMB share ensures it is persistent across cluster deployments if you don't delete the `-storage` resource group.
+
+> **Pro Tip:** You can set `STORAGE_ACCOUNT_GROUP` and `STORAGE_ACCOUNT_NAME` inside an `.env` file if you want to use a pre-existing storage account. As long as you use `make` to do everything, the value will be automatically overridden.
 
 ## Disclaimers
 
