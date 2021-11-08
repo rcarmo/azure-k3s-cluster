@@ -109,7 +109,8 @@ proxy:
 	-L 9080:localhost:80 \
 	-L 9081:localhost:81 \
 	-L 8080:localhost:8080 \
-	-L 4040:localhost:4040
+	-L 4040:localhost:4040 \
+	-L 5000:localhost:5000
 
 # Show k3s helper log
 tail-helper:
