@@ -10,13 +10,6 @@ write_files:
     permissions: 0644
     content: |
       write-kubeconfig-mode: "0644"
-  - path: /etc/docker/daemon.json
-    permissions: 0644
-    content: |
-      {
-        "log-driver": "json-file",
-        "log-opts": {"max-size": "10m", "max-file": "5"}
-      }
   - path: /root/k3s-helper.py
     permissions: 0755
     content: |
@@ -83,11 +76,20 @@ write_files:
       ResourceDisk.Filesystem=ext4
       ResourceDisk.EnableSwap=y
       ResourceDisk.SwapSizeMB=2048
+    # Set up the Docker daemon so that we can copy containers to a private registry exposed on master0 port 5000
+  - path: /etc/docker/daemon.json
+    permissions: 0444
+    content: |
+      {
+        "insecure-registries": ["master0:5000"],
+        "log-driver": "json-file",
+        "log-opts": {"max-size": "10m", "max-file": "5"}
+      }
   - path: /etc/rancher/k3s/registries.yaml
     permissions: 0444
     content: |
       mirrors:
-        docker.io:
+        private:
           endpoint:
             - http://master0:5000 
     # If you change the SSH port, don't forget to edit this accordingly
@@ -107,14 +109,15 @@ apt:
   package_update: true
   package_upgrade: true
 packages:
-  - ntp
-  - tmux
-  - htop
-  - vim
-  - fail2ban
   - curl
-  - python3-bottle
   - docker.io
+  - fail2ban
+  - htop
+  - make
+  - ntp
+  - python3-bottle
+  - tmux
+  - vim
 
 runcmd:
   - timedatectl set-timezone Europe/Lisbon
