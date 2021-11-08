@@ -126,6 +126,8 @@ runcmd:
   - systemctl enable k3s-helper
   # remove snapd so it doesn't cause extra load on smaller VMs
   - apt-get purge -y snapd unattended-upgrades
+  # make sure we can issue sudoless Docker commands to manage images
+  - sudo usermod -aG docker cluster
   - rm -rf /snap /var/snap /var/lib/snapd /var/log/unattended-upgrades
   - apt-get dist-upgrade -y
   - apt-get autoremove -y
