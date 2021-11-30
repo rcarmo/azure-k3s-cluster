@@ -47,8 +47,9 @@ if (environ.get('APPLY_CLOUDFLARE_NSG','false').lower() == 'true'):
         stderr.write('Adding Cloudflare CIDRs to HTTP(S) NSG.\n')
         for i in cf['result']['ipv4_cidrs']:
             allowed_ingress_ips.append(i)
-        for i in cf['result']['ipv6_cidrs']:
-            allowed_ingress_ips.append(i)
+        # IPv6 cannot currently be specified in the same rule, so we're leaving it out for now
+        #for i in cf['result']['ipv6_cidrs']:
+        #    allowed_ingress_ips.append(i)
         # allow access from controlling machine
         res = loads(urlopen('https://ipinfo.io/json').read().decode('utf-8'))
         ip = res['ip']
