@@ -35,7 +35,7 @@
         "description": "Allowed IP address(es) for SSH access"
       }
     },
-    "masterIngressAllowediSourceAddressPrefixes": {
+    "masterIngressAllowedSourceAddressPrefixes": {
       "type": "array",
       "defaultValue": ["*"],
       "metadata": {
