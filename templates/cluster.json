@@ -236,7 +236,7 @@
       "comments": "Virtual Network",
       "type": "Microsoft.Network/virtualNetworks",
       "name": "cluster",
-      "apiVersion": "2015-06-15",
+      "apiVersion": "2017-06-01",
       "location": "[resourceGroup().location]",
       "properties": {
         "addressSpace": {
@@ -540,7 +540,7 @@
         "count": "[parameters('masterCount')]"
       },
       "name": "[concat(parameters('masterPrefix'),copyIndex())]",
-      "apiVersion": "2015-06-15",
+      "apiVersion": "2017-06-01",
       "location": "[resourceGroup().location]",
       "properties": {
         "primary": true,
@@ -576,7 +576,7 @@
         "name": "clusterMasterPublicIPAddresses",
         "count": "[parameters('masterCount')]"
       },
-      "apiVersion": "2015-06-15",
+      "apiVersion": "2017-06-01",
       "location": "[resourceGroup().location]",
       "properties": {
         "publicIPAllocationMethod": "Dynamic",
@@ -592,7 +592,7 @@
         "count": "[parameters('masterCount')]"
       },
       "name": "[concat(parameters('masterPrefix'), copyIndex())]",
-      "apiVersion": "2015-06-15",
+      "apiVersion": "2017-06-01",
       "location": "[resourceGroup().location]",
       "properties": {
         "securityRules": [
