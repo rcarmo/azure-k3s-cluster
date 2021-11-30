@@ -13,6 +13,8 @@ export FILE_SHARES=config data registry
 export STORAGE_ACCOUNT_NAME?=shared0$(shell echo $(MASTER_FQDN)|shasum|base64|tr '[:upper:]' '[:lower:]'|cut -c -16)
 export SHARE_NAME?=data
 export SSH_PORT?=2211
+export APPLY_CLOUDFLARE_NSG?=true
+export APPLY_ORIGIN_NSG?=true
 export SHELL=/bin/bash
 
 

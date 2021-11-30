@@ -1,10 +1,11 @@
 #!/bin/env python3 
 from base64 import b64encode
 from os import environ
-from json import dumps
+from json import dumps, loads
 from os.path import exists, join
 from sys import stderr, stdout
 from string import Template
+from urllib.request import urlopen
 
 def slurp(filename, as_template=True):
     with open("cloud-config/" + filename, "r") as config:
@@ -28,6 +29,36 @@ else:
     stderr.write('No public keys found, exiting.\n')
     exit(1)
 
+# Figure out our public IP address and apply an ACL
+if (environ.get('APPLY_ORIGIN_NSG','false').lower() == 'true'):
+    allowed_management_ips = []
+    res = loads(urlopen('https://ipinfo.io/json').read().decode('utf-8'))
+    ip = res['ip']
+    stderr.write('Your public IP is ' + ip + '. Applying NSG to SSH.\n')
+    allowed_management_ips.append(ip)
+else:
+    allowed_management_ips = ["*"]
+
+# Retrieve the list of Cloudflare proxies and apply an ACL so the ingress only accepts traffic from those
+if (environ.get('APPLY_CLOUDFLARE_NSG','false').lower() == 'true'):
+    allowed_ingress_ips = []
+    cf = loads(urlopen('https://api.cloudflare.com/client/v4/ips').read().decode("utf-8"))
+    if cf['success'] is True:
+        stderr.write('Adding Cloudflare CIDRs to HTTP(S) NSG.\n')
+        for i in cf['result']['ipv4_cidrs']:
+            allowed_ingress_ips.append(i)
+        for i in cf['result']['ipv6_cidrs']:
+            allowed_ingress_ips.append(i)
+        # allow access from controlling machine
+        res = loads(urlopen('https://ipinfo.io/json').read().decode('utf-8'))
+        ip = res['ip']
+        stderr.write('Your public IP is ' + ip + '. Adding to HTTP(S) NSG.\n')
+    else:
+        stderr.write('Could not retrieve Cloudflare CIDRs, exiting.\n')
+        exit(1)
+else:
+    allowed_ingress_ips = ["*"]
+
 params = {
     "adminUsername": {
         "value": ADMIN_USERNAME
@@ -40,6 +71,12 @@ params = {
     },
     "masterSSHPort": { 
         "value": int(environ.get('SSH_PORT', 22))
+    },
+    "masterManagementAllowedSourceAddressPrefixes": { 
+    "value": allowed_management_ips
+    },
+    "masterIngressAllowedSourceAddressPrefixes": { 
+        "value": allowed_ingress_ips
     },
     "masterCustomData": {
         "value": slurp("master.yml")

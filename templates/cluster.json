@@ -28,6 +28,20 @@
         "description": "Port number for SSH access"
       }
     },
+    "masterManagementAllowedAccessPrefixes": {
+      "type": "array",
+      "defaultValue": ["*"],
+      "metadata": {
+        "description": "Allowed IP address(es) for SSH access"
+      }
+    },
+    "masterIngressAllowedAccessPrefixes": {
+      "type": "array",
+      "defaultValue": ["*"],
+      "metadata": {
+        "description": "Allowed IP address(es) for HTTP(S) access to ingress"
+      }
+    },
     "masterSize": {
       "type": "string",
       "defaultValue": "Standard_B1ls",
@@ -586,7 +600,7 @@
             "name": "default-allow-ssh",
             "properties": {
               "priority": 1000,
-              "sourceAddressPrefix": "*",
+              "sourceAddressPrefixes": "[parameters('masterManagementAllowedAccessPrefixes')]",
               "protocol": "Tcp",
               "destinationPortRange": "[parameters('masterSSHPort')]",
               "access": "Allow",
@@ -599,22 +613,9 @@
             "name": "default-allow-http",
             "properties": {
               "priority": 1001,
-              "sourceAddressPrefix": "*",
+              "sourceAddressPrefixes": "[parameters('masterIngressAllowedAccessPrefixes')]",
               "protocol": "Tcp",
               "destinationPortRange": "80",
-              "access": "Allow",
-              "direction": "Inbound",
-              "sourcePortRange": "*",
-              "destinationAddressPrefix": "*"
-            }
-          },
-          {
-            "name": "default-allow-alternate-http",
-            "properties": {
-              "priority": 1002,
-              "sourceAddressPrefix": "*",
-              "protocol": "Tcp",
-              "destinationPortRange": "81",
               "access": "Allow",
               "direction": "Inbound",
               "sourcePortRange": "*",
@@ -625,7 +626,7 @@
             "name": "default-allow-https",
             "properties": {
               "priority": 1003,
-              "sourceAddressPrefix": "*",
+              "sourceAddressPrefixes": "[parameters('masterIngressAllowedAccessPrefixes')]",
               "protocol": "Tcp",
               "destinationPortRange": "443",
               "access": "Allow",
@@ -638,7 +639,7 @@
             "name": "default-allow-managment-http",
             "properties": {
               "priority": 1004,
-              "sourceAddressPrefix": "*",
+              "sourceAddressPrefixes": "[parameters('masterManagementAllowedAccessPrefixes')]",
               "protocol": "Tcp",
               "destinationPortRange": "8080",
               "access": "Allow",
