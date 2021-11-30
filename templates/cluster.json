@@ -28,14 +28,14 @@
         "description": "Port number for SSH access"
       }
     },
-    "masterManagementAllowedAccessPrefixes": {
+    "masterManagementAllowedSourceAddressPrefixes": {
       "type": "array",
       "defaultValue": ["*"],
       "metadata": {
         "description": "Allowed IP address(es) for SSH access"
       }
     },
-    "masterIngressAllowedAccessPrefixes": {
+    "masterIngressAllowediSourceAddressPrefixes": {
       "type": "array",
       "defaultValue": ["*"],
       "metadata": {
@@ -600,7 +600,7 @@
             "name": "default-allow-ssh",
             "properties": {
               "priority": 1000,
-              "sourceAddressPrefixes": "[parameters('masterManagementAllowedAccessPrefixes')]",
+              "sourceAddressPrefixes": "[parameters('masterManagementAllowedSourceAddressPrefixes')]",
               "protocol": "Tcp",
               "destinationPortRange": "[parameters('masterSSHPort')]",
               "access": "Allow",
@@ -613,7 +613,7 @@
             "name": "default-allow-http",
             "properties": {
               "priority": 1001,
-              "sourceAddressPrefixes": "[parameters('masterIngressAllowedAccessPrefixes')]",
+              "sourceAddressPrefixes": "[parameters('masterIngressAllowedSourceAddressPrefixes')]",
               "protocol": "Tcp",
               "destinationPortRange": "80",
               "access": "Allow",
@@ -626,7 +626,7 @@
             "name": "default-allow-https",
             "properties": {
               "priority": 1003,
-              "sourceAddressPrefixes": "[parameters('masterIngressAllowedAccessPrefixes')]",
+              "sourceAddressPrefixes": "[parameters('masterIngressAllowedSourceAddressPrefixes')]",
               "protocol": "Tcp",
               "destinationPortRange": "443",
               "access": "Allow",
@@ -639,7 +639,7 @@
             "name": "default-allow-managment-http",
             "properties": {
               "priority": 1004,
-              "sourceAddressPrefixes": "[parameters('masterManagementAllowedAccessPrefixes')]",
+              "sourceAddressPrefixes": "[parameters('masterManagementAllowedSourceAddressPrefixes')]",
               "protocol": "Tcp",
               "destinationPortRange": "8080",
               "access": "Allow",
