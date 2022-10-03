@@ -294,7 +294,7 @@
         "count": "[parameters('masterCount')]"
       },
       "identity": {
-        "type": "userAssigned",
+        "type": "UserAssigned",
         "userAssignedIdentities": {
            "[resourceID('Microsoft.ManagedIdentity/userAssignedIdentities', variables('managedIdentityName'))]": {}
         }      
