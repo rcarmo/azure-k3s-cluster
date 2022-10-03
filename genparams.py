@@ -97,6 +97,9 @@ params = {
     "masterSize": {
         "value": environ.get('MASTER_SKU', 'Standard_B2s')
     },
+    "agentPriority": {
+        "value": environ.get('AGENT_PRIORITY', 'Spot')
+    },
     "agentSize": {
         "value": environ.get('AGENT_SKU', 'Standard_F2s_v2')
     },
@@ -105,6 +108,6 @@ params = {
     }
 }
 
-stderr.write('Using SKUs: master:%s, agents:%s' % (params['masterSize']['value'], params['agentSize']['value']))
+stderr.write('Using SKUs: master:%s, agents:%s (%s)' % (params['masterSize']['value'], params['agentSize']['value'], params['agentPriority']['value']))
 
 stdout.write(dumps(params, indent=4))

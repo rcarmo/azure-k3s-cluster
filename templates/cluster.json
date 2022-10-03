@@ -124,6 +124,18 @@
         "Standard_NV6ads_A10_v5"
       ]
     },
+    "agentPriority": {
+      "type": "string",
+      "defaultValue": "Spot",
+      "allowedValues": [
+        "Low",
+        "Regular",
+        "Spot"
+      ],
+      "metadata": {
+        "description": "Admin username on all VMs"
+      }
+    },
     "adminUsername": {
       "type": "string",
       "defaultValue": "cluster",
@@ -383,7 +395,7 @@
           "mode": "Manual"
         },
         "virtualMachineProfile": {
-          "priority": "Spot",
+          "priority": "[parameters('agentPriority')]",
           "evictionPolicy": "delete",
           "billingProfile": {
             "maxPrice": -1
