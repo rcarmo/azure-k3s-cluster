@@ -58,7 +58,7 @@ if (environ.get('APPLY_CLOUDFLARE_NSG','false').lower() == 'true'):
         stderr.write('Could not retrieve Cloudflare CIDRs, exiting.\n')
         exit(1)
 else:
-    allowed_ingress_ips = ["*"]
+    allowed_ingress_ips = allowed_management_ips
 
 params = {
     "adminUsername": {
