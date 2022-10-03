@@ -378,7 +378,6 @@
         "capacity": "[parameters('agentCount')]"
       },
       "properties": {
-        "publicIPAllocationMethod": "dynamic",
         "overprovision": false,
         "upgradePolicy": {
           "mode": "Manual"
