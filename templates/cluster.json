@@ -112,6 +112,7 @@
         "Standard_A2m_v2",
         "Standard_A4m_v2",
         "Standard_A8m_v2",
+        "Standard_B1ls",
         "Standard_DS1_v2",
         "Standard_DS2_v2",
         "Standard_DS3_v2",
@@ -119,7 +120,8 @@
         "Standard_F1s",
         "Standard_F2s_v2",
         "Standard_F4s_v2",
-        "Standard_F8s_v2"
+        "Standard_F8s_v2",
+        "Standard_NV6ads_A10_v5"
       ]
     },
     "adminUsername": {
@@ -199,7 +201,7 @@
         "description": "OS disk size"
       }
     },
-    "diagsSasProperties": {
+    "diagsSASProperties": {
       "type": "object",
       "defaultValue": {
         "signedServices": "bt",
@@ -209,7 +211,7 @@
         "signedResourceTypes": "co"
       },
       "metadata": {
-        "description": "SAS token with 10-year lifetime for Linux diagnostics"
+        "description": "SAS token with 10-year lifetime for Linux diagnostics - currently unused until we re-enable extensions"
       }
     }
   },
@@ -268,7 +270,7 @@
     },
     {
       "comments": "Role assignment as Virtual Machine Contributor to each master instance",
-      "apiVersion": "2017-09-01",
+      "apiVersion": "2020-10-01-preview",
       "type": "Microsoft.Authorization/roleAssignments",
       "copy": {
         "name": "[parameters('masterPrefix')]",
@@ -369,13 +371,14 @@
       "type": "Microsoft.Compute/virtualMachineScaleSets",
       "name": "[parameters('agentPrefix')]",
       "location": "[resourceGroup().location]",
-      "apiVersion": "2019-03-01",
+      "apiVersion": "2021-11-01",
       "sku": {
         "name": "[parameters('agentSize')]",
         "tier": "Standard",
         "capacity": "[parameters('agentCount')]"
       },
       "properties": {
+        "publicIPAllocationMethod": "dynamic",
         "overprovision": false,
         "upgradePolicy": {
           "mode": "Manual"
