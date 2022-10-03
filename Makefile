@@ -4,6 +4,7 @@ export STORAGE_GROUP?=k3s-storage
 export LOCATION?=eastus
 export MASTER_COUNT?=1
 export AGENT_COUNT?=3
+export AGENT_PRIORITY?=Spot
 export MASTER_FQDN=$(COMPUTE_GROUP)-master0.$(LOCATION).cloudapp.azure.com
 export LOADBALANCER_FQDN=$(COMPUTE_GROUP)-agents-lb.$(LOCATION).cloudapp.azure.com
 export VMSS_NAME=agents
