@@ -41,7 +41,7 @@ else:
 
 # Retrieve the list of Cloudflare proxies and apply an ACL so the ingress only accepts traffic from those
 if (environ.get('APPLY_CLOUDFLARE_NSG','false').lower() == 'true'):
-    allowed_ingress_ips = []
+    allowed_ingress_ips = allowed_management_ips
     cf = loads(urlopen('https://api.cloudflare.com/client/v4/ips').read().decode("utf-8"))
     if cf['success'] is True:
         stderr.write('Adding Cloudflare CIDRs to HTTP(S) NSG.\n')
