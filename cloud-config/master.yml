@@ -121,7 +121,7 @@ packages:
 
 runcmd:
   - timedatectl set-timezone Europe/Lisbon
-  - curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.22.3+k3s1 sh -
+  - curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=$K3S_VERSION sh -
   - kubectl completion bash | tee /etc/bash_completion.d/kubectl
   - systemctl enable k3s-helper
   # remove snapd so it doesn't cause extra load on smaller VMs
