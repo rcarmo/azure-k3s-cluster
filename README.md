@@ -82,7 +82,9 @@ Also, a lot of the ARM templating involved (for metrics, managed identities, etc
 * `make proxy` - opens an SSH session to `master0` and sets up TCP forwarding to `localhost`
 * `make tail-helper` - opens an SSH session to `master0` and tails the `k3s-helper` log
 * `make list-endpoints` - list DNS aliases
-* `make destroy-cluster` - destroys the entire cluster
+* `make destroy-cluster` - destroys the entire cluster (should not be the default)
+* `make destroy-compute` - destroys only the compute cluster (should be the default if you want to save costs)
+* `make destroy-storage` - destroys the storage (should be avoided)
 
 ## Recommended Sequence
 
@@ -94,7 +96,10 @@ Also, a lot of the ARM templating involved (for metrics, managed identities, etc
     make view-deployment
     # Go to the Azure portal and check the deployment progress
     
-    # Clean up after we're done working
+    # Clean up after we're done working for the day, to save costs (preserves storage)
+    make destroy-compute
+    
+    # Clean up the whole thing (destroys storage)
     make destroy-cluster
 
 

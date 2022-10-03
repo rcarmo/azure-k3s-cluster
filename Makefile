@@ -94,6 +94,11 @@ create-shares:
 		az storage share create --account-name $(STORAGE_ACCOUNT_NAME) --name $(SHARE_NAME) --output tsv;)
 
 # Destroy the entire resource group and all cluster resources
+
+destroy-cluster:
+	make destroy-compute
+	make destroy-storage
+
 destroy-compute:
 	az group delete \
 		--name $(COMPUTE_GROUP) \
