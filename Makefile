@@ -14,6 +14,8 @@ export STORAGE_ACCOUNT_NAME?=shared0$(shell echo $(MASTER_FQDN)|shasum|base64|tr
 export SHARE_NAME?=data
 export SSH_PORT?=2211
 export APPLY_CLOUDFLARE_NSG?=false
+# This will set both your management and ingress NSGs to your public IP address 
+# - since using "*" in an NSG may be disabled by policy
 export APPLY_ORIGIN_NSG?=true
 export K3S_VERSION=v1.25.2+k3s1
 export SHELL=/bin/bash
