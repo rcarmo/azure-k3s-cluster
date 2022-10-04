@@ -31,7 +31,7 @@ Also, a lot of the ARM templating involved (for metrics, managed identities, etc
 * [ ] *TODO*: Leverage [Instance Protection](https://docs.microsoft.com/en-us/azure/virtual-machine-scale-sets/virtual-machine-scale-sets-instance-protection) and [Scale-In Policies](https://docs.microsoft.com/en-us/azure/virtual-machine-scale-sets/virtual-machine-scale-sets-scale-in-policy)
 * [ ] WIP: simple Python scale-down helper ([blog post](https://taoofmac.com/space/blog/2019/06/15/1740) on how I'm going to do that with managed service identities and the instance metadata service)
 * [ ] support an easy way to automatically redeploy charts and manifests when the compute resource group is recreated (`/srv/autostart`?)
-* [x] Tailscale installed for accessing the master securely without a public IP (you still need to log in once and set up tailscale manually after deployment)
+* [x] Tailscale installed for accessing the master securely without a public IP (you still need to log in once and set up tailscale manually with `sudo tailscale up` after deployment)
 * [x] Preliminary NVIDIA support (for agents only - installing the drivers takes a LONG time and does not work on all SKUs yey)
 * [x] VM SKUs and agent priorities can now be set from environment variables in `Makefile`
 * [x] Button down NSGs to allow access from fewer IP addresses by default
