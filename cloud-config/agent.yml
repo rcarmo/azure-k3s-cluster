@@ -12,26 +12,34 @@ write_files:
     permissions: 0755
     content: |
       #!/bin/bash
-      if [ ${K3S_USE_DOCKER} == "true" ]; then
+      echo "Removing snapd so it doesn't cause extra load on smaller VMs"
+      apt-get purge -y snapd unattended-upgrades
+      rm -rf /snap /var/snap /var/lib/snapd /var/log/unattended-upgrades
+      echo "Starting preflight."
+      if [ ${K3S_USE_DOCKER} eq "true" ]; then
         apt-get update
-        # If we need NVIDIA compatibility, we fetch the official Docker CE package
-        if [ ${K3S_ENABLE_NVIDIA} == "true" ]; then
+        if [ ${K3S_ENABLE_NVIDIA} eq "true" ]; then
+          echo "Installing Docker CE for NVIDIA compatibility"
           curl https://get.docker.com | sh 
         else
+          echo "Installing Docker"
           apt install -y docker.io
         fi
-        systemctl --now enable docker
+        systemctl enable docker
+        echo "Starting Docker"
+        systemctl start docker
         # We are not supposed to SSH to agents, but this is useful for troubleshooting
         usermod -aG docker cluster
       fi
-      if [ ${K3S_ENABLE_NVIDIA} == "true" ]; then
-        # These steps are experimental and do not work with all NV Series VMs
+      if [ ${K3S_ENABLE_NVIDIA} eq "true" ]; then
+        echo "Installing NVIDIA drivers"
         apt-get install linux-headers-$(uname -r)
         distribution=$(. /etc/os-release;echo $ID$VERSION_ID | sed -e 's/\.//g') \
           && cd /tmp && wget https://developer.download.nvidia.com/compute/cuda/repos/$distribution/x86_64/cuda-keyring_1.0-1_all.deb \
           && dpkg -i cuda-keyring_1.0-1_all.deb
         apt-get update
         apt-get -y install nvidia-driver-520
+        echo "Installing NVIDIA container toolkit"
         distribution=$(. /etc/os-release;echo $ID$VERSION_ID) \
           && curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg \
           && curl -s -L https://nvidia.github.io/libnvidia-container/$distribution/libnvidia-container.list | \
@@ -40,6 +48,11 @@ write_files:
         apt-get update
         apt-get install -y nvidia-docker2
       fi
+      echo "Final cleanups"
+      apt-get dist-upgrade -y
+      apt-get autoremove -y
+      echo "Rebooting."
+      reboot
   - path: /root/join-cluster.sh
     permissions: 0755
     content: |
@@ -181,10 +194,4 @@ runcmd:
   # these are not required yet since we will be rebooting the VM
   #- systemctl start k3s-leave
   #- systemctl start k3s-join
-  # remove snapd so it doesn't cause extra load on smaller VMs
-  - apt-get purge -y snapd unattended-upgrades
-  - rm -rf /snap /var/snap /var/lib/snapd /var/log/unattended-upgrades
-  - apt-get dist-upgrade -y
-  - apt-get autoremove -y
   - /root/preflight.sh
-  - reboot
