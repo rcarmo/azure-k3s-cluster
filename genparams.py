@@ -95,19 +95,19 @@ params = {
         "value": slurp("agent.yml")
     },
     "masterSize": {
-        "value": environ.get('MASTER_SKU', 'Standard_B2s')
+        "value": environ.get('MASTER_SKU', 'Standard_B1ls')
     },
     "agentPriority": {
         "value": environ.get('AGENT_PRIORITY', 'Spot')
     },
     "agentSize": {
-        "value": environ.get('AGENT_SKU', 'Standard_F2s_v2')
+        "value": environ.get('AGENT_SKU', 'Standard_B1ls')
     },
     "diskType": {
         "value": "Standard_LRS"
     }
 }
 
-stderr.write('Using SKUs: master:%s, agents:%s (%s)' % (params['masterSize']['value'], params['agentSize']['value'], params['agentPriority']['value']))
+stderr.write('Using SKUs: master:%s, agents:%s (%s)\n' % (params['masterSize']['value'], params['agentSize']['value'], params['agentPriority']['value']))
 
 stdout.write(dumps(params, indent=4))

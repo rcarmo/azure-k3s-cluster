@@ -3,7 +3,9 @@ export COMPUTE_GROUP?=k3s-cluster
 export STORAGE_GROUP?=k3s-storage
 export LOCATION?=eastus
 export MASTER_COUNT?=1
+export MASTER_SKU?=Standard_B1ls
 export AGENT_COUNT?=3
+export AGENT_SKU?=Standard_B1ls
 export AGENT_PRIORITY?=Spot
 export MASTER_FQDN=$(COMPUTE_GROUP)-master0.$(LOCATION).cloudapp.azure.com
 export LOADBALANCER_FQDN=$(COMPUTE_GROUP)-agents-lb.$(LOCATION).cloudapp.azure.com
@@ -18,6 +20,8 @@ export APPLY_CLOUDFLARE_NSG?=false
 # This will set both your management and ingress NSGs to your public IP address 
 # - since using "*" in an NSG may be disabled by policy
 export APPLY_ORIGIN_NSG?=true
+export USE_DOCKER?=false
+export ENABLE_NVIDIA?=false
 export K3S_VERSION=v1.25.2+k3s1
 export SHELL=/bin/bash
 
