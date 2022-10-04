@@ -15,7 +15,7 @@ write_files:
       rm -rf /snap /var/snap /var/lib/snapd /var/log/unattended-upgrades
       echo "Starting preflight."
       apt-get update
-      if [ ${K3S_ENABLE_TAILSCALE} eq "true" ]; then
+      if [ "${K3S_ENABLE_TAILSCALE}" == "true" ]; then
         echo "Installing Tailscale."
         . /etc/os-release
         curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/${VERSION_CODENAME}.noarmor.gpg | sudo tee /usr/share/keyrings/tailscale-archive-keyring.gpg >/dev/null
@@ -24,7 +24,7 @@ write_files:
       fi
       echo "Installing and starting K3S $K3S_VERSION "
       # For the master we can rely on the OS docker.io package, so we do not need to download anything
-      if [ ${K3S_USE_DOCKER} == "true" ]; then
+      if [ "${K3S_USE_DOCKER}" == "true" ]; then
         curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=$K3S_VERSION sh -s - --docker
       else
         curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=$K3S_VERSION sh -

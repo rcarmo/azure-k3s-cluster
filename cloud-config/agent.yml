@@ -16,9 +16,9 @@ write_files:
       apt-get purge -y snapd unattended-upgrades
       rm -rf /snap /var/snap /var/lib/snapd /var/log/unattended-upgrades
       echo "Starting preflight."
-      if [ ${K3S_USE_DOCKER} eq "true" ]; then
+      if [ "${K3S_USE_DOCKER}" == "true" ]; then
         apt-get update
-        if [ ${K3S_ENABLE_NVIDIA} eq "true" ]; then
+        if [ "${K3S_ENABLE_NVIDIA}" == "true" ]; then
           echo "Installing Docker CE for NVIDIA compatibility"
           curl https://get.docker.com | sh 
         else
@@ -31,7 +31,7 @@ write_files:
         # We are not supposed to SSH to agents, but this is useful for troubleshooting
         usermod -aG docker cluster
       fi
-      if [ ${K3S_ENABLE_NVIDIA} eq "true" ]; then
+      if [ "${K3S_ENABLE_NVIDIA}" == "true" ]; then
         echo "Installing NVIDIA drivers"
         apt-get install linux-headers-$(uname -r)
         distribution=$(. /etc/os-release;echo $ID$VERSION_ID | sed -e 's/\.//g') \
