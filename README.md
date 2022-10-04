@@ -25,11 +25,16 @@ Also, a lot of the ARM templating involved (for metrics, managed identities, etc
 * [ ] air-gapped (i.e., standalone) install without `curl`
 * [ ] test metrics server
 * [ ] document `cloud-config`
+* [ ] variables for more permissive connectivity levels
 * [ ] clean `kubernetes-dashboard` deployment
 * [ ] WIP: sample deployments/pods/charts
 * [ ] *TODO*: Leverage [Instance Protection](https://docs.microsoft.com/en-us/azure/virtual-machine-scale-sets/virtual-machine-scale-sets-instance-protection) and [Scale-In Policies](https://docs.microsoft.com/en-us/azure/virtual-machine-scale-sets/virtual-machine-scale-sets-scale-in-policy)
 * [ ] WIP: simple Python scale-down helper ([blog post](https://taoofmac.com/space/blog/2019/06/15/1740) on how I'm going to do that with managed service identities and the instance metadata service)
 * [ ] support an easy way to automatically redeploy charts and manifests when the compute resource group is recreated (`/srv/autostart`?)
+* [x] VM SKUs and agent priorities can now be set from environment variables in `Makefile`
+* [x] Button down NSGs to allow access from fewer IP addresses by default
+* [x] linted ARM template using VS Code
+* [x] upgrade to `k3s` v1.25.2+k3s1 and allow setting cluster version in `Makefile`
 * [x] add pre-defined NSGs for Cloudflare ingress and origin SSH access (*TODO*: Separate handling for IPv6)
 * [x] support an (insecure) private registry hosted on the master node (requires using `docker` instead of `containerd`, but saves a lot of hassle when doing tests)
 * [x] allow setting SSH_PORT via `Makefile`
