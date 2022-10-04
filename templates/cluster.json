@@ -374,6 +374,7 @@
       },
       "dependsOn": [
         "[resourceID('Microsoft.ManagedIdentity/userAssignedIdentities', variables('managedIdentityName'))]",
+        "[concat('Microsoft.Network/virtualNetworks/', 'cluster')]",
         "[concat('Microsoft.Network/networkInterfaces/', parameters('masterPrefix'), copyIndex())]",
         "[concat('Microsoft.Compute/availabilitySets/', 'masters')]",
         "[concat('Microsoft.Storage/storageAccounts/', variables('diagsName'))]"
@@ -466,6 +467,7 @@
         }
       },
       "dependsOn": [
+        "[concat('Microsoft.Network/virtualNetworks/', 'cluster')]",
         "[concat('Microsoft.Storage/storageAccounts/', variables('diagsName'))]"
       ]
     },
