@@ -31,6 +31,7 @@ Also, a lot of the ARM templating involved (for metrics, managed identities, etc
 * [ ] *TODO*: Leverage [Instance Protection](https://docs.microsoft.com/en-us/azure/virtual-machine-scale-sets/virtual-machine-scale-sets-instance-protection) and [Scale-In Policies](https://docs.microsoft.com/en-us/azure/virtual-machine-scale-sets/virtual-machine-scale-sets-scale-in-policy)
 * [ ] WIP: simple Python scale-down helper ([blog post](https://taoofmac.com/space/blog/2019/06/15/1740) on how I'm going to do that with managed service identities and the instance metadata service)
 * [ ] support an easy way to automatically redeploy charts and manifests when the compute resource group is recreated (`/srv/autostart`?)
+* [x] Preliminary NVIDIA support
 * [x] VM SKUs and agent priorities can now be set from environment variables in `Makefile`
 * [x] Button down NSGs to allow access from fewer IP addresses by default
 * [x] linted ARM template using VS Code
@@ -104,7 +105,7 @@ Also, a lot of the ARM templating involved (for metrics, managed identities, etc
     # Clean up after we're done working for the day, to save costs (preserves storage)
     make destroy-compute
     
-    # Clean up the whole thing (destroys storage)
+    # Clean up the whole thing (destroys storage as well)
     make destroy-cluster
 
 
@@ -127,6 +128,10 @@ This is done in the simplest possible way, by using `cloud-init` to bootstrap a 
 The cluster is actually split across two resource groups (`-storage` and `-compute`). 
 
 The `-storage` resource group contains an Azure Storage Account with an Azure Files (SMB) share that is mounted on all the nodes. This makes it trivial to deploy the cluster, work on it for a few hours, store your manifests and data on `/srv`, destroy the `-compute` resources to save costs and spin them up again against the same `-storage` the next day.
+
+## NVIDIA Support
+
+Since it is possible to run machines like `Standard_NV6ads_A10_v5` as spot instances, you can now try to run `k3s` on these with `nvidia-docker2`, which should be considered highly experimental at the very least.
 
 ## Deployment Notes
 

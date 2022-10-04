@@ -8,6 +8,28 @@ write_files:
         "log-driver": "json-file",
         "log-opts": {"max-size": "10m", "max-file": "5"}
       }
+  - path: /root/preflight.sh
+    permissions: 0755
+    content: |
+      #!/bin/bash
+      if [ ${K3S_USE_DOCKER} != "true" ]; then
+        exit
+      fi
+      curl https://get.docker.com | sh 
+      systemctl --now enable docker
+
+      if [ ${K3S_ENABLE_NVIDIA} != "true" ]; then
+        exit
+      fi
+
+      distribution=$(. /etc/os-release;echo $ID$VERSION_ID) \
+      && curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg \
+      && curl -s -L https://nvidia.github.io/libnvidia-container/$distribution/libnvidia-container.list | \
+            sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | \
+            tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
+      apt-get update
+      apt-get install -y nvidia-docker2
+
   - path: /root/join-cluster.sh
     permissions: 0755
     content: |
@@ -17,7 +39,12 @@ write_files:
       # get the  cluster token
       TOKEN=$(wget -nv -q -O - --retry-connrefused --tries=0 --waitretry 5 http://master0:1337/join/$HOSTNAME)
       # install k3s and join the cluster
-      curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=$K3S_VERSION K3S_URL=https://master0:6443 K3S_TOKEN=$TOKEN sh -
+      if [ ${K3S_USE_DOCKER} != "true" ]; then
+        curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=$K3S_VERSION K3S_URL=https://master0:6443 K3S_TOKEN=$TOKEN sh -
+      else
+        curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=$K3S_VERSION K3S_URL=https://master0:6443 K3S_TOKEN=$TOKEN sh -s - --docker   
+      fi
+
   - path: /root/leave-cluster.sh
     permissions: 0755
     content: |
@@ -133,13 +160,15 @@ packages:
   #- vim
   - fail2ban
   #- curl
-  - docker.io
 
 runcmd:
+  - echo "K3S_USE_DOCKER=$USE_DOCKER \n" >> /etc/environment
+  - echo "K3S_ENABLE_NVIDIA=$ENABLE_NVIDIA \n" >> /etc/environment
   - timedatectl set-timezone Europe/Lisbon
   - systemctl enable k3s-join
   - systemctl enable k3s-leave
   - systemctl enable spot-helper
+  # these are not required yet since we will be rebooting the VM
   #- systemctl start k3s-leave
   #- systemctl start k3s-join
   # remove snapd so it doesn't cause extra load on smaller VMs
@@ -147,4 +176,5 @@ runcmd:
   - rm -rf /snap /var/snap /var/lib/snapd /var/log/unattended-upgrades
   - apt-get dist-upgrade -y
   - apt-get autoremove -y
+  - /root/preflight.sh
   - reboot
