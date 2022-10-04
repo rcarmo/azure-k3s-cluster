@@ -1,5 +1,5 @@
 # Set environment variables
-export COMPUTE_GROUP?=k3s-cluster
+export COMPUTE_GROUP?=k3s-compute
 export STORAGE_GROUP?=k3s-storage
 export LOCATION?=eastus
 export MASTER_COUNT?=1
