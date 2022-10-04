@@ -137,6 +137,17 @@
         "description": "Admin username on all VMs"
       }
     },
+    "enableNVIDIA": {
+      "type": "string",
+      "defaultValue": "false",
+      "allowedValues": [
+        "true",
+        "false"
+      ],
+      "metadata": {
+        "description": "Whether or not these machines will require an NVIDIA-compatible image"
+      }
+    },
     "adminUsername": {
       "type": "string",
       "defaultValue": "cluster",
@@ -340,8 +351,8 @@
         "storageProfile": {
           "imageReference": {
             "publisher": "Canonical",
-            "offer": "0001-com-ubuntu-server-focal",
-            "sku": "20_04-lts-gen2",
+            "offer": "[if(equals(parameters('enableNVIDIA'),'true'), ' 0001-com-ubuntu-minimal-bionic','0001-com-ubuntu-minimal-jammy')]",
+            "sku": "[if(equals(parameters('enableNVIDIA'),'true'), 'minimal-18_04-lts-gen2','minimal-22_04-lts-gen2')]",
             "version": "latest"
           },
           "osDisk": {
@@ -433,8 +444,8 @@
             },
             "imageReference": {
               "publisher": "Canonical",
-              "offer": "0001-com-ubuntu-server-focal",
-              "sku": "20_04-lts-gen2",
+              "offer": "[if(equals(parameters('enableNVIDIA'),'true'), ' 0001-com-ubuntu-minimal-bionic','0001-com-ubuntu-minimal-jammy')]",
+              "sku": "[if(equals(parameters('enableNVIDIA'),'true'), 'minimal-18_04-lts-gen2','minimal-22_04-lts-gen2')]",
               "version": "latest"
             }
           },

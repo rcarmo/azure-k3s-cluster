@@ -40,6 +40,10 @@ SSH_TO_MASTER:=ssh -p $(SSH_PORT) -q -A -i keys/$(SSH_KEY) $(ADMIN_USERNAME)@$(M
 list-resources:
 	az group list --output table
 
+# list image references
+list-images:
+	az vm image list --all --publisher Canonical --output table
+
 # Dump list of location IDs
 list-locations:
 	az account list-locations --output table
