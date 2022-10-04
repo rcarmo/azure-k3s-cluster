@@ -10,10 +10,11 @@ write_files:
     permissions: 0755
     content: |
       #!/bin/bash
-      echo "Removing snapd so it doesn't cause extra load on smaller VMs"
+      . /etc/environment
+      echo "--> Removing snapd so it doesn't cause extra load on smaller VMs"
       apt-get purge -y snapd unattended-upgrades
       rm -rf /snap /var/snap /var/lib/snapd /var/log/unattended-upgrades
-      echo "Starting preflight."
+      echo "--> Starting preflight - Tailscale: ${K3S_ENABLE_TAILSCALE} Docker: ${K3S_USE_DOCKER}"
       apt-get update
       if [ "${K3S_ENABLE_TAILSCALE}" == "true" ]; then
         echo "Installing Tailscale."
@@ -22,7 +23,7 @@ write_files:
         curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/${VERSION_CODENAME}.tailscale-keyring.list | sudo tee /etc/apt/sources.list.d/tailscale.list
         apt-get update && apt-get install tailscale
       fi
-      echo "Installing and starting K3S $K3S_VERSION "
+      echo "--> Installing and starting K3S $K3S_VERSION "
       # For the master we can rely on the OS docker.io package, so we do not need to download anything
       if [ "${K3S_USE_DOCKER}" == "true" ]; then
         curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=$K3S_VERSION sh -s - --docker
@@ -31,13 +32,13 @@ write_files:
       fi
       # make sure we can issue sudoless Docker commands to manage images
       usermod -aG docker cluster
-      echo "Setting up kubectl completion"
+      echo "--> Setting up kubectl completion"
       kubectl completion bash | tee /etc/bash_completion.d/kubectl
       systemctl enable k3s-helper
-      echo "Final cleanups"
+      echo "--> Final cleanups"
       apt-get dist-upgrade -y
       apt-get autoremove -y
-      echo "Rebooting."
+      echo "==> Rebooting."
       reboot
   - path: /etc/rancher/k3s/config.yaml
     permissions: 0644
@@ -138,9 +139,6 @@ mounts:
     - cifs
     - vers=3.0,username=${STORAGE_ACCOUNT_NAME},password=${STORAGE_ACCOUNT_KEY},dir_mode=0770,file_mode=0660,uid=1000,gid=1000,noperm,mfsymlinks,iocharset=utf8
 
-apt:
-  package_update: true
-  package_upgrade: true
 packages:
   - curl
   - docker.io
@@ -155,7 +153,7 @@ packages:
   - vim
 
 runcmd:
-  - echo "K3S_USE_DOCKER=$USE_DOCKER \n" >> /etc/environment
-  - echo "K3S_ENABLE_TAILSCALE=$ENABLE_TAILSCALE \n" >> /etc/environment
+  - echo "K3S_USE_DOCKER=$USE_DOCKER " >> /etc/environment
+  - echo "K3S_ENABLE_TAILSCALE=$ENABLE_TAILSCALE " >> /etc/environment
   - timedatectl set-timezone Europe/Lisbon
   - /root/preflight.sh

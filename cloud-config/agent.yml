@@ -12,17 +12,18 @@ write_files:
     permissions: 0755
     content: |
       #!/bin/bash
-      echo "Removing snapd so it doesn't cause extra load on smaller VMs"
+      . /etc/environment
+      echo "--> Removing snapd so it doesn't cause extra load on smaller VMs"
       apt-get purge -y snapd unattended-upgrades
       rm -rf /snap /var/snap /var/lib/snapd /var/log/unattended-upgrades
-      echo "Starting preflight."
+      echo "--> Starting preflight - Docker: ${K3S_USE_DOCKER} NVIDIA: ${K3S_ENABLE_NVIDIA}"
       if [ "${K3S_USE_DOCKER}" == "true" ]; then
         apt-get update
         if [ "${K3S_ENABLE_NVIDIA}" == "true" ]; then
-          echo "Installing Docker CE for NVIDIA compatibility"
+          echo "--> Installing Docker CE for NVIDIA compatibility"
           curl https://get.docker.com | sh 
         else
-          echo "Installing Docker"
+          echo "--> Installing Docker"
           apt install -y docker.io
         fi
         systemctl enable docker
@@ -32,14 +33,14 @@ write_files:
         usermod -aG docker cluster
       fi
       if [ "${K3S_ENABLE_NVIDIA}" == "true" ]; then
-        echo "Installing NVIDIA drivers"
+        echo "--> Installing NVIDIA drivers"
         apt-get install linux-headers-$(uname -r)
         distribution=$(. /etc/os-release;echo $ID$VERSION_ID | sed -e 's/\.//g') \
           && cd /tmp && wget https://developer.download.nvidia.com/compute/cuda/repos/$distribution/x86_64/cuda-keyring_1.0-1_all.deb \
           && dpkg -i cuda-keyring_1.0-1_all.deb
         apt-get update
         apt-get -y install nvidia-driver-520
-        echo "Installing NVIDIA container toolkit"
+        echo "--> Installing NVIDIA container toolkit"
         distribution=$(. /etc/os-release;echo $ID$VERSION_ID) \
           && curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg \
           && curl -s -L https://nvidia.github.io/libnvidia-container/$distribution/libnvidia-container.list | \
@@ -48,10 +49,10 @@ write_files:
         apt-get update
         apt-get install -y nvidia-docker2
       fi
-      echo "Final cleanups"
+      echo "--> Final cleanups"
       apt-get dist-upgrade -y
       apt-get autoremove -y
-      echo "Rebooting."
+      echo "==> Rebooting."
       reboot
   - path: /root/join-cluster.sh
     permissions: 0755
@@ -173,9 +174,6 @@ mounts:
     - cifs
     - vers=3.0,username=${STORAGE_ACCOUNT_NAME},password=${STORAGE_ACCOUNT_KEY},dir_mode=0770,file_mode=0660,uid=1000,gid=1000,noperm,noatime,mfsymlinks,iocharset=utf8
 
-apt:
-  package_update: true
-  package_upgrade: true
 packages:
   - ntp
   #- tmux
@@ -185,8 +183,8 @@ packages:
   #- curl
 
 runcmd:
-  - echo "K3S_USE_DOCKER=$USE_DOCKER \n" >> /etc/environment
-  - echo "K3S_ENABLE_NVIDIA=$ENABLE_NVIDIA \n" >> /etc/environment
+  - echo "K3S_USE_DOCKER=$USE_DOCKER " >> /etc/environment
+  - echo "K3S_ENABLE_NVIDIA=$ENABLE_NVIDIA " >> /etc/environment
   - timedatectl set-timezone Europe/Lisbon
   - systemctl enable k3s-join
   - systemctl enable k3s-leave
