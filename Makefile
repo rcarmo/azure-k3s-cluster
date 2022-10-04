@@ -22,6 +22,7 @@ export APPLY_CLOUDFLARE_NSG?=false
 export APPLY_ORIGIN_NSG?=true
 export USE_DOCKER?=false
 export ENABLE_NVIDIA?=false
+export ENABLE_TAILSCALE?=false
 export K3S_VERSION=v1.25.2+k3s1
 export SHELL=/bin/bash
 
@@ -36,14 +37,14 @@ SSH_KEY:=$(ADMIN_USERNAME).pem
 SSH_TO_MASTER:=ssh -p $(SSH_PORT) -q -A -i keys/$(SSH_KEY) $(ADMIN_USERNAME)@$(MASTER_FQDN) -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
 
 # dump resource groups
-resources:
+list-resources:
 	az group list --output table
 
 # Dump list of location IDs
-locations:
+list-locations:
 	az account list-locations --output table
 
-sizes:
+list-sizes:
 	az vm list-sizes --location=$(LOCATION) --output table
 
 # Generate SSH keys for the cluster (optional)
