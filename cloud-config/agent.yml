@@ -52,15 +52,14 @@ write_files:
       echo "--> Final cleanups"
       apt-get dist-upgrade -y
       apt-get autoremove -y
-      echo "==> Rebooting."
-      reboot
+      echo "==> Preflight done."
   - path: /root/join-cluster.sh
     permissions: 0755
     content: |
       #!/bin/bash
       mkdir -p /mnt/scratch && chmod a+w+x /mnt/scratch
       HOSTNAME=`hostname`
-      # get the  cluster token
+      # get the cluster token
       TOKEN=$(wget -nv -q -O - --retry-connrefused --tries=0 --waitretry 5 http://master0:1337/join/$HOSTNAME)
       # install k3s and join the cluster
       if [ "${K3S_USE_DOCKER}" != "true" ]; then
@@ -193,3 +192,4 @@ runcmd:
   #- systemctl start k3s-leave
   #- systemctl start k3s-join
   - /root/preflight.sh
+  - reboot

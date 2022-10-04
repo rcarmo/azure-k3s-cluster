@@ -38,8 +38,7 @@ write_files:
       echo "--> Final cleanups"
       apt-get dist-upgrade -y
       apt-get autoremove -y
-      echo "==> Rebooting."
-      reboot
+      echo "==> Preflight done."
   - path: /etc/rancher/k3s/config.yaml
     permissions: 0644
     content: |
@@ -157,3 +156,4 @@ runcmd:
   - echo "K3S_ENABLE_TAILSCALE=$ENABLE_TAILSCALE " >> /etc/environment
   - timedatectl set-timezone Europe/Lisbon
   - /root/preflight.sh
+  - reboot
