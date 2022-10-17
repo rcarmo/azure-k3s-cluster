@@ -6,7 +6,7 @@ A (WIP) dynamically resizable [`k3s`][k3s] cluster for Azure, based on my [`azur
 
 ## What
 
-This is an Azure Resource Manager template that automatically deploys a [`k3s`][k3s] cluster atop Ubuntu 20.04. This cluster has a single master VM and a VM scaleset for workers/agents, plus required network infrastructure.
+This is an Azure Resource Manager template that automatically deploys a [`k3s`][k3s] cluster atop Ubuntu LTS. This cluster has a single master VM and a VM scaleset for workers/agents, plus required network infrastructure.
 
 The template defaults to deploying B-Series VMs (`B1ls`) with the smallest possible managed disk size (S4, 32GB). It also deploys (and mounts) an Azure File Share on all machines with (very) permissive access at `/srv`, which makes it quite easy to run stateful services without messing about with volume claims.
 
