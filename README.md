@@ -132,7 +132,7 @@ The `-storage` resource group contains an Azure Storage Account with an Azure Fi
 
 ## NVIDIA Support
 
-Since it is possible to run machines like `Standard_NV6ads_A10_v5` as spot instances, you can now try to run `k3s` on these with `nvidia-docker2`, which should be considered highly experimental since Ubuntu 20.04 is not yet supported on those machines (although 16.04 is).
+Since it is possible to run machines like `Standard_NV6ads_A10_v5` as spot instances, you can now try to run `k3s` on these with `nvidia-docker2`, which should be considered highly experimental since Ubuntu 22.04 is not yet supported on those machines (although older versions are).
 
 ## Deployment Notes
 
