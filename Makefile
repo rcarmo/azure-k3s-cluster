@@ -102,7 +102,7 @@ redeploy:
 
 # create a set of SMB shares on the storage account
 create-shares:
-	$(eval STORAGE_ACCOUNT := $(shell az storage account list --resource-group ci-swarm-cluster --output tsv --query "[].name"))
+	$(eval STORAGE_ACCOUNT := $(shell az storage account list --resource-group $(STORAGE_GROUP) --output tsv --query "[].name"))
 	$(foreach SHARE_NAME, $(FILE_SHARES), \
 		az storage share create --account-name $(STORAGE_ACCOUNT_NAME) --name $(SHARE_NAME) --output tsv;)
 
@@ -124,7 +124,7 @@ destroy-storage:
 
 # SSH to master node
 proxy:
-	-cat keys/cluster.pem | ssh-add -k -
+	-cat keys/$(ADMIN_USERNAME).pem | ssh-add -k -
 	$(SSH_TO_MASTER) \
 	-L 9080:localhost:80 \
 	-L 9081:localhost:81 \
@@ -134,7 +134,7 @@ proxy:
 
 # Show k3s helper log
 tail-helper:
-	-cat keys/cluster.pem | ssh-add -k -
+	-cat keys/$(ADMIN_USERNAME).pem | ssh-add -k -
 	$(SSH_TO_MASTER) \
 	sudo journalctl -f -u k3s-helper
 
@@ -149,7 +149,7 @@ view-deployment:
 # Watch deployment
 watch-deployment:
 	watch az resource list \
-		--resource-group acme-prod-k3s-compute \
+		--resource-group $(COMPUTE_GROUP) \
 		--output table
 
 # List VMSS instances
