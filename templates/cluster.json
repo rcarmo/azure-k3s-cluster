@@ -134,7 +134,7 @@
         "Spot"
       ],
       "metadata": {
-        "description": "Admin username on all VMs"
+        "description": "Instance priority"
       }
     },
     "enableNVIDIA": {
