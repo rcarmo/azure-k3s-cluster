@@ -1,4 +1,4 @@
-# azure-k3s-cluster (WIP)
+# azure-k3s-cluster
 
 A (WIP) dynamically resizable [`k3s`][k3s] cluster for Azure, based on my [`azure-docker-swarm-cluster`][adsc] project.
 
@@ -111,6 +111,8 @@ Also, a lot of the ARM templating involved (for metrics, managed identities, etc
 
 
 ## Requirements
+
+[Azure Cloud Shell](https://shell.azure.com/) (which includes all the below in `bash` mode) or:
 
 * [Python 3][p]
 * The [Azure CLI][az] (`pip install -U -r requirements.txt` will install it)
